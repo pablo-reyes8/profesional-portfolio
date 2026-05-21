@@ -26,6 +26,10 @@ class ValueNoise {
   }
 }
 
+const RING_FOLLOW_LERP = 0.2;
+const IDLE_RING_FOLLOW_LERP = 0.035;
+const SIMULATION_TIME_SCALE = 0.7;
+
 export class MainParticles {
   readonly scene: AntigravityScene;
   readonly renderer: THREE.WebGLRenderer;
@@ -210,11 +214,12 @@ export class MainParticles {
 
   update(): void {
     const elapsed = this.scene.clock.getElapsedTime();
+    const simulationTime = elapsed * SIMULATION_TIME_SCALE;
     const deltaTime = elapsed - this.lastTime;
     this.lastTime = elapsed;
 
-    const noiseX = (this.noise.getVal(this.scene.time * 0.66 + 94.234) - 0.5) * 2;
-    const noiseY = (this.noise.getVal(this.scene.time * 0.75 + 21.028) - 0.5) * 2;
+    const noiseX = (this.noise.getVal(this.scene.time * 0.42 + 94.234) - 0.5) * 2;
+    const noiseY = (this.noise.getVal(this.scene.time * 0.48 + 21.028) - 0.5) * 2;
 
     if (this.scene.isIntersecting) {
       this.cursorPos.set(
@@ -222,14 +227,14 @@ export class MainParticles {
         this.scene.intersectionPoint.y * 0.175 + noiseY * 0.1
       );
       this.ringPos.set(
-        this.ringPos.x + (this.cursorPos.x - this.ringPos.x) * 0.02,
-        this.ringPos.y + (this.cursorPos.y - this.ringPos.y) * 0.02
+        this.ringPos.x + (this.cursorPos.x - this.ringPos.x) * RING_FOLLOW_LERP,
+        this.ringPos.y + (this.cursorPos.y - this.ringPos.y) * RING_FOLLOW_LERP
       );
     } else {
       this.cursorPos.set(noiseX * 0.2, noiseY * 0.1);
       this.ringPos.set(
-        this.ringPos.x + (this.cursorPos.x - this.ringPos.x) * 0.01,
-        this.ringPos.y + (this.cursorPos.y - this.ringPos.y) * 0.01
+        this.ringPos.x + (this.cursorPos.x - this.ringPos.x) * IDLE_RING_FOLLOW_LERP,
+        this.ringPos.y + (this.cursorPos.y - this.ringPos.y) * IDLE_RING_FOLLOW_LERP
       );
     }
 
@@ -238,10 +243,10 @@ export class MainParticles {
       this.scene.particlesScale;
 
     this.simMaterial.uniforms.uPosition.value = this.everRendered ? this.rt1.texture : this.posTex;
-    this.simMaterial.uniforms.uTime.value = elapsed;
+    this.simMaterial.uniforms.uTime.value = simulationTime;
     this.simMaterial.uniforms.uDeltaTime.value = deltaTime;
     this.simMaterial.uniforms.uRingRadius.value =
-      0.175 + Math.sin(this.scene.time * 1) * 0.03 + Math.cos(this.scene.time * 3) * 0.02;
+      0.175 + Math.sin(this.scene.time * 0.72) * 0.03 + Math.cos(this.scene.time * 2.1) * 0.02;
     this.simMaterial.uniforms.uRingPos.value = this.ringPos;
     this.simMaterial.uniforms.uRingWidth.value = this.scene.ringWidth;
     this.simMaterial.uniforms.uRingWidth2.value = this.scene.ringWidth2;
@@ -252,7 +257,7 @@ export class MainParticles {
     this.renderer.setRenderTarget(null);
 
     this.renderMaterial.uniforms.uPosition.value = this.everRendered ? this.rt2.texture : this.posTex;
-    this.renderMaterial.uniforms.uTime.value = elapsed;
+    this.renderMaterial.uniforms.uTime.value = simulationTime;
     this.renderMaterial.uniforms.uRingPos.value = this.ringPos;
     this.renderMaterial.uniforms.uParticleScale.value = this.particleScale;
   }

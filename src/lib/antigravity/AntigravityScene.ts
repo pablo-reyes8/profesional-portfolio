@@ -31,7 +31,6 @@ export class AntigravityScene {
   isPaused = false;
   isIntersecting = false;
   mouseIsOver = false;
-  skipFrame = false;
   time = 0;
   lastTime = 0;
   dt = 0;
@@ -155,7 +154,7 @@ export class AntigravityScene {
     this.time += this.dt;
     this.particles.update();
 
-    if (this.interactive && !this.skipFrame) {
+    if (this.interactive) {
       const rect = this.canvas.getBoundingClientRect();
 
       this.mouse.x = (cursorTracker.cursor.x - rect.left) * (cursorTracker.screenWidth / rect.width);
@@ -167,11 +166,6 @@ export class AntigravityScene {
         this.mouse.x <= 1 &&
         this.mouse.y >= -1 &&
         this.mouse.y <= 1;
-    }
-
-    this.skipFrame = !this.skipFrame;
-    if (this.skipFrame) {
-      return;
     }
 
     this.raycaster.setFromCamera(this.mouse, this.camera);
