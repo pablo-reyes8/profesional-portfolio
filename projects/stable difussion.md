@@ -1,6 +1,8 @@
 # Conditioning Stable Diffusion  
 **Attribute-conditioned latent diffusion for face generation (CFG + cross-attention), with a reproducible, config-driven workflow.**
 
+https://github.com/pablo-reyes8/conditioning-stable-diffusion
+
 <p align="left">
   <a href="https://github.com/pablo-reyes8/conditioning-stable-diffusion"><img alt="Repo" src="https://img.shields.io/badge/GitHub-conditioning--stable--diffusion-181717?logo=github&logoColor=white"></a>
   <img alt="Python" src="https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white">

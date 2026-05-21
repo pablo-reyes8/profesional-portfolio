@@ -1,5 +1,7 @@
 # Bayesian Structural VAR (SBVAR) with Local Projections (LP)
 
+https://github.com/pablo-reyes8/bayesian-structural-var
+
 ![Repo size](https://img.shields.io/github/repo-size/pablo-reyes8/bayesian-structural-var)
 ![Last commit](https://img.shields.io/github/last-commit/pablo-reyes8/bayesian-structural-var)
 ![Open issues](https://img.shields.io/github/issues/pablo-reyes8/bayesian-structural-var)

@@ -1,6 +1,6 @@
 # Scratch Convolutional Neural Net for Multiple Classification 
 
-
+https://github.com/pablo-reyes8/scratch-conv-net-classification
 
 ![Repo size](https://img.shields.io/github/repo-size/pablo-reyes8/scratch-conv-net-classification)
 ![Last commit](https://img.shields.io/github/last-commit/pablo-reyes8/scratch-conv-net-classification)

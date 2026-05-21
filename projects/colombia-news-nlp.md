@@ -2,6 +2,8 @@
 
 # 📰 Colombian News NLP Analysis
 
+https://github.com/pablo-reyes8/colombian-news-nlp-analysis
+
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![NLP](https://img.shields.io/badge/NLP-Spanish%20News-orange)]()

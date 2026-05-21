@@ -1,5 +1,7 @@
 # SME Finance AI Agent
 
+https://github.com/pablo-reyes8/sme-financial-ai-agent
+
 Chatbot para PyMEs en Colombia con Flask + LangChain. Incluye un modulo de conocimiento local, recuperacion semantica con Chroma y un flujo conversacional con respuestas estructuradas y eficientes.
 
 ## Caracteristicas

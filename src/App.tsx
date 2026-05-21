@@ -1,6 +1,7 @@
 import About from "./components/About";
 import Hero from "./components/Hero";
 import Navbar from "./components/Navbar";
+import Projects from "./components/Projects";
 
 function App() {
   return (
@@ -9,9 +10,7 @@ function App() {
       <main>
         <Hero />
         <About />
-        <section id="projects" className="placeholder-section">
-          <p>Projects</p>
-        </section>
+        <Projects />
         <section id="experience" className="placeholder-section">
           <p>Experience</p>
         </section>

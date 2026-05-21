@@ -1,5 +1,7 @@
 # Inflation Forecasting: ARIMA, Volatility Models, and Deep Learning
 
+https://github.com/pablo-reyes8/inflation-forecasting-econometrics-ml
+
 ![Repo size](https://img.shields.io/github/repo-size/pablo-reyes8/inflation-forecasting-arima-lstm)
 ![Last commit](https://img.shields.io/github/last-commit/pablo-reyes8/inflation-forecasting-arima-lstm)
 ![Open issues](https://img.shields.io/github/issues/pablo-reyes8/inflation-forecasting-arima-lstm)

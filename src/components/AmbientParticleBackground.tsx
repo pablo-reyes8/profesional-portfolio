@@ -3,9 +3,10 @@ import { AntigravityScene } from "../lib/antigravity/AntigravityScene";
 
 interface AmbientParticleBackgroundProps {
   className?: string;
+  variant?: "about" | "projects";
 }
 
-function AmbientParticleBackground({ className }: AmbientParticleBackgroundProps) {
+function AmbientParticleBackground({ className, variant = "about" }: AmbientParticleBackgroundProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -17,10 +18,11 @@ function AmbientParticleBackground({ className }: AmbientParticleBackgroundProps
       container: containerRef.current,
       theme: "light",
       mode: "ambient",
+      ambientLayout: variant === "projects" ? "project-ribbons" : "field",
       interactive: false,
-      density: 165,
-      particlesScale: 0.87,
-      alpha: 1.3,
+      density: variant === "projects" ? 150 : 165,
+      particlesScale: variant === "projects" ? 0.82 : 0.87,
+      alpha: variant === "projects" ? 0.92 : 1.3,
       ringDisplacement: 0
     });
 
@@ -57,7 +59,7 @@ function AmbientParticleBackground({ className }: AmbientParticleBackgroundProps
       }
       scene.kill();
     };
-  }, []);
+  }, [variant]);
 
   return (
     <div

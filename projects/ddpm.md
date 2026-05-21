@@ -1,5 +1,7 @@
 # DDPM: Denoising Diffusion Probabilistic Model
 
+https://github.com/pablo-reyes8/ddpm-diffusion-model
+
 ![Status](https://img.shields.io/badge/Status-Research%20Prototype-green)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)

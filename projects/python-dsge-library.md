@@ -1,5 +1,7 @@
 # DSGE Modeling Toolkit (Python)
 
+https://github.com/pablo-reyes8/PyDSGEforge
+
 This repository captures the core building blocks of a Dynare-style DSGE workflow implemented in Python. The code currently lives under `src/` and focuses on symbolic model definition, linearization, solution, and Bayesian inference primitives. A lightweight `DSGE` facade now ties those pieces together so you can go from symbolic equations and priors to steady state, MAP, and MCMC draws in a single call.
 
 ## Design Overview

@@ -79,8 +79,14 @@ export class MainParticles {
 
     for (let i = 0; i < points.length && i < this.length; i += 1) {
       if (this.scene.mode === "ambient") {
-        const nx = (points[i][0] / 500 - 0.5) * 1.15;
-        const ny = (points[i][1] / 500 - 0.5) * 0.72;
+        const rawX = points[i][0] / 500;
+        const rawY = points[i][1] / 500;
+        const nx = (rawX - 0.5) * (this.scene.ambientLayout === "project-ribbons" ? 1.3 : 1.15);
+        const ribbon = Math.sin(rawX * 7.0 + rawY * 2.4) * 0.075;
+        const ny =
+          this.scene.ambientLayout === "project-ribbons"
+            ? (rawY - 0.5) * 0.62 + ribbon
+            : (rawY - 0.5) * 0.72;
         this.pointsData.push(nx * 250, ny * 250);
       } else {
         this.pointsData.push(points[i][0] - 250, points[i][1] - 250);

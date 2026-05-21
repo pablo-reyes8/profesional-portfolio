@@ -2,6 +2,8 @@
 
 # ♠️ Blackjack RL: Sequential Decision-Making Under Uncertainty
 
+https://github.com/pablo-reyes8/blackjack-rl-research
+
 ![Python](https://img.shields.io/badge/python-3.11%2B-blue?style=for-the-badge)
 ![PyTorch](https://img.shields.io/badge/framework-PyTorch-red?style=for-the-badge)
 ![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)

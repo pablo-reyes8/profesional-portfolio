@@ -2,6 +2,7 @@ export interface AntigravitySceneOptions {
   container: HTMLElement;
   theme?: "light" | "dark";
   mode?: "hero" | "ambient";
+  ambientLayout?: "field" | "project-ribbons";
   particlesScale?: number;
   density?: number;
   alpha?: number;

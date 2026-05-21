@@ -22,6 +22,7 @@ export class AntigravityScene {
   readonly particlesScale: number;
   readonly density: number;
   readonly mode: "hero" | "ambient";
+  readonly ambientLayout: "field" | "project-ribbons";
   readonly alpha: number;
   readonly floatTextureType: THREE.TextureDataType;
 
@@ -52,6 +53,7 @@ export class AntigravityScene {
     this.theme = options.theme || "light";
     this.interactive = options.interactive || false;
     this.mode = options.mode || "hero";
+    this.ambientLayout = options.ambientLayout || "field";
     this.pixelRatio = Math.min(options.pixelRatio || window.devicePixelRatio || 1, 2);
     this.particlesScale = options.particlesScale || 0.75;
     this.density = options.density || 200;

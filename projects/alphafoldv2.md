@@ -4,6 +4,8 @@
 
 # AlphaFold2: From Scratch
 
+https://github.com/pablo-reyes8/alphafold2-from-scratch
+
 <div align="center">
 
 **A modular PyTorch reconstruction of AlphaFold2 built for architectural transparency, controlled ablations, and serious geometric deep learning research.**

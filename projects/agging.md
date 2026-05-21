@@ -4,6 +4,8 @@
 
 # Diffusion Aging
 
+https://github.com/pablo-reyes8/dual-aging-diffusion
+
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
 ![PyTorch](https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?style=flat&logo=PyTorch&logoColor=white)
 ![Status](https://img.shields.io/badge/status-active_research-orange)

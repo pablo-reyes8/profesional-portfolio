@@ -5,16 +5,21 @@ const skills = [
   { name: "Python", icon: "python" },
   { name: "R", icon: "r" },
   { name: "Stata", icon: "stata" },
+  {
+    name: "MATLAB",
+    iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/matlab/matlab-original.svg"
+  },
   { name: "SQL", icon: "postgresql" },
   { name: "LaTeX", icon: "latex" },
   { name: "PyTorch", icon: "pytorch" },
+  { name: "FastAPI", icon: "fastapi" },
   { name: "scikit-learn", icon: "scikitlearn" },
   { name: "Hugging Face", icon: "huggingface" },
   { name: "OpenCV", icon: "opencv" },
   { name: "Pandas", icon: "pandas" },
   { name: "Docker", icon: "docker" },
   { name: "GitHub Actions", icon: "githubactions" },
-  { name: "Power BI", icon: "powerbi" },
+  { name: "Power BI", iconUrl: "https://cdn.simpleicons.org/powerbi/F2C811" },
   { name: "Kubernetes", icon: "kubernetes" },
   { name: "Airflow", icon: "apacheairflow" }
 ];
@@ -28,11 +33,6 @@ function About() {
 
         <div className="about-grid">
           <div className="about-copy">
-            <p className="about-lead">
-              I study complex economic and social systems through{" "}
-              <strong>data</strong>, <strong>statistical modeling</strong>, and{" "}
-              <strong>computational research</strong>.
-            </p>
 
             <p>
               I am <strong>Pablo Reyes</strong>, an economist and data scientist focused
@@ -65,7 +65,7 @@ function About() {
                   <img
                     alt=""
                     className="skill-icon"
-                    src={`https://cdn.simpleicons.org/${skill.icon}`}
+                    src={skill.iconUrl ?? `https://cdn.simpleicons.org/${skill.icon}`}
                   />
                   <span>{skill.name}</span>
                 </span>
