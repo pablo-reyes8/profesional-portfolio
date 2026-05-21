@@ -1,8 +1,10 @@
 export interface AntigravitySceneOptions {
   container: HTMLElement;
   theme?: "light" | "dark";
+  mode?: "hero" | "ambient";
   particlesScale?: number;
   density?: number;
+  alpha?: number;
   interactive?: boolean;
   gui?: boolean;
   verbose?: boolean;

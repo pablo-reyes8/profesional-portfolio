@@ -21,6 +21,8 @@ export class AntigravityScene {
   readonly pixelRatio: number;
   readonly particlesScale: number;
   readonly density: number;
+  readonly mode: "hero" | "ambient";
+  readonly alpha: number;
   readonly floatTextureType: THREE.TextureDataType;
 
   ringWidth: number;
@@ -49,9 +51,11 @@ export class AntigravityScene {
     this.container = options.container;
     this.theme = options.theme || "light";
     this.interactive = options.interactive || false;
+    this.mode = options.mode || "hero";
     this.pixelRatio = Math.min(options.pixelRatio || window.devicePixelRatio || 1, 2);
     this.particlesScale = options.particlesScale || 0.75;
     this.density = options.density || 200;
+    this.alpha = options.alpha ?? 1;
     this.ringWidth = options.ringWidth || 0.107;
     this.ringWidth2 = options.ringWidth2 || 0.05;
     this.ringDisplacement = options.ringDisplacement || 0.15;
@@ -96,7 +100,9 @@ export class AntigravityScene {
       new THREE.PlaneGeometry(12.5, 12.5),
       new THREE.MeshBasicMaterial({ color: 0xff0000, visible: false, side: THREE.DoubleSide })
     );
-    this.scene.add(this.raycastPlane);
+    if (this.interactive) {
+      this.scene.add(this.raycastPlane);
+    }
 
     this.colorControls = {
       color1: this.theme === "dark" ? "#7189ff" : "#2c64ed",
@@ -166,6 +172,11 @@ export class AntigravityScene {
         this.mouse.x <= 1 &&
         this.mouse.y >= -1 &&
         this.mouse.y <= 1;
+    }
+
+    if (!this.interactive) {
+      this.isIntersecting = false;
+      return;
     }
 
     this.raycaster.setFromCamera(this.mouse, this.camera);

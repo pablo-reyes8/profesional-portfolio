@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import AmbientParticleBackground from "./AmbientParticleBackground";
 
 const skills = [
   { name: "Python", icon: "python" },
@@ -21,34 +22,34 @@ const skills = [
 function About() {
   return (
     <section id="about" className="about-section">
+      <AmbientParticleBackground className="section-particles" />
       <div className="about-container">
         <p className="section-eyebrow">About Me</p>
 
         <div className="about-grid">
           <div className="about-copy">
             <p className="about-lead">
-              I work at the intersection of <strong>machine learning</strong>,{" "}
-              <strong>economics</strong>, and{" "}
-              <strong>research-driven data science</strong>.
+              I study complex economic and social systems through{" "}
+              <strong>data</strong>, <strong>statistical modeling</strong>, and{" "}
+              <strong>computational research</strong>.
             </p>
 
             <p>
-              I am <strong>Pablo Reyes</strong>, an economist and data scientist
-              focused on <strong>machine learning</strong>,{" "}
-              <strong>computer vision</strong>, <strong>causal inference</strong>,
-              and <strong>Bayesian methods</strong>. I currently work at the
-              Central Bank of Colombia as a researcher in the team of Board
-              Member Mauricio Villamizar, developing empirical research on
+              I am <strong>Pablo Reyes</strong>, an economist and data scientist focused
+              on <strong>computer vision</strong>, <strong>causal inference</strong>,{" "}
+              <strong>Bayesian methods</strong>, and applied machine learning. I
+              currently work at the Central Bank of Colombia as a researcher in the team
+              of Board Member Mauricio Villamizar, developing empirical research on
               financial data, market behavior, and economic policy questions.
             </p>
 
             <p>
-              My work combines <strong>deep learning</strong> and rigorous
-              empirical methods to study complex social and economic systems. I
-              am especially interested in <strong>representation learning</strong>,
-              generative computer vision, reproducible research pipelines, and
-              models that are not only predictive, but also interpretable and
-              useful for understanding real-world mechanisms.
+              My work combines <strong>deep learning</strong> and rigorous empirical
+              methods to study real-world mechanisms. I am especially interested in{" "}
+              <strong>representation learning</strong>, generative computer vision,
+              reproducible research pipelines, and models that are not only predictive,
+              but also interpretable and useful for understanding economic and social
+              dynamics.
             </p>
           </div>
 

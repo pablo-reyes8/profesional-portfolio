@@ -201,10 +201,43 @@
   position: relative;
   margin-top: -1px;
   padding: clamp(5.5rem, 9vw, 8rem) 1.5rem clamp(6rem, 10vw, 9rem);
+  overflow: hidden;
   background: #ffffff;
 }
 
+.about-section::before {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  content: "";
+  background:
+    radial-gradient(circle at 18% 28%, rgba(44, 100, 237, 0.04), transparent 26rem),
+    radial-gradient(circle at 78% 58%, rgba(248, 66, 66, 0.035), transparent 22rem),
+    radial-gradient(circle at 58% 18%, rgba(255, 207, 3, 0.03), transparent 20rem);
+}
+
+.section-particles,
+.ambient-particle-background {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.ambient-particle-background canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
 .about-container {
+  position: relative;
+  z-index: 3;
   width: min(100%, 1040px);
   margin: 0 auto;
 }
@@ -259,15 +292,47 @@
 .stack-panel {
   position: relative;
   min-height: 430px;
-  border: 1px solid rgba(16, 16, 20, 0.08);
-  border-radius: 28px;
+  border: 1px solid rgba(16, 16, 20, 0.035);
+  border-radius: 42px;
   padding: 1.2rem;
   overflow: hidden;
   background:
-    radial-gradient(circle at 30% 20%, rgba(44, 100, 237, 0.1), transparent 14rem),
-    radial-gradient(circle at 78% 72%, rgba(248, 66, 66, 0.08), transparent 12rem),
-    rgba(250, 250, 250, 0.78);
-  box-shadow: 0 24px 70px rgba(16, 16, 20, 0.08);
+    radial-gradient(circle at 25% 22%, rgba(44, 100, 237, 0.055), transparent 15rem),
+    radial-gradient(circle at 72% 72%, rgba(248, 66, 66, 0.035), transparent 14rem),
+    radial-gradient(circle at 56% 42%, rgba(255, 207, 3, 0.035), transparent 12rem),
+    radial-gradient(circle at 82% 20%, rgba(124, 58, 237, 0.032), transparent 12rem),
+    rgba(255, 255, 255, 0.38);
+  box-shadow:
+    0 34px 90px rgba(16, 16, 20, 0.045),
+    inset 0 1px 0 rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.stack-panel::before {
+  position: absolute;
+  inset: -28%;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  content: "";
+  background:
+    radial-gradient(circle at 28% 22%, rgba(52, 107, 241, 0.052), transparent 36%),
+    radial-gradient(circle at 74% 70%, rgba(255, 70, 65, 0.04), transparent 34%),
+    radial-gradient(circle at 58% 42%, rgba(255, 207, 3, 0.04), transparent 36%);
+  filter: blur(32px);
+}
+
+.stack-panel::after {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  content: "";
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.08)),
+    radial-gradient(circle at center, transparent 46%, rgba(255, 255, 255, 0.22) 100%);
 }
 
 .stack-title {
@@ -285,6 +350,7 @@
 .stack-cloud {
   position: absolute;
   inset: 3.4rem 1.2rem 1.2rem;
+  z-index: 1;
 }
 
 .skill-bubble {
@@ -299,14 +365,14 @@
   border: 1px solid rgba(16, 16, 20, 0.08);
   border-radius: 999px;
   padding: 0 0.78rem;
-  background: rgba(255, 255, 255, 0.82);
+  background: rgba(255, 255, 255, 0.76);
   color: rgba(16, 16, 20, 0.78);
   font-size: 0.9rem;
   font-weight: 600;
-  box-shadow: 0 16px 36px rgba(16, 16, 20, 0.08);
+  box-shadow: 0 12px 30px rgba(16, 16, 20, 0.065);
   transform: translate(-50%, -50%);
-  animation: skill-float calc(6s + (var(--bubble-index) * 0.17s)) ease-in-out infinite;
-  animation-delay: calc(var(--bubble-index) * -0.27s);
+  animation: skill-float calc(13s + (var(--bubble-index) * 0.34s)) ease-in-out infinite;
+  animation-delay: calc(var(--bubble-index) * -0.48s);
   transition:
     border-color 180ms ease,
     box-shadow 180ms ease,
@@ -347,16 +413,21 @@
 
 @keyframes skill-float {
   0%,
+  18%,
   100% {
     translate: 0 0;
   }
 
-  33% {
-    translate: 10px -12px;
+  42% {
+    translate: 4px -5px;
   }
 
-  66% {
-    translate: -8px 10px;
+  68% {
+    translate: -3px 4px;
+  }
+
+  84% {
+    translate: 1px -2px;
   }
 }
 

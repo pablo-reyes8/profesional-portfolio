@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import type { AntigravityScene } from "./AntigravityScene";
 import { createAntigravityPoissonPoints } from "./poissonDisk";
+import { ambientSimulationFragmentShader } from "../../shaders/antigravity/ambientSimulationFragment.glsl";
 import { renderFragmentShader } from "../../shaders/antigravity/renderFragment.glsl";
 import { renderVertexShader } from "../../shaders/antigravity/renderVertex.glsl";
 import { simulationFragmentShader } from "../../shaders/antigravity/simulationFragment.glsl";
@@ -77,7 +78,13 @@ export class MainParticles {
     this.pointsData = [];
 
     for (let i = 0; i < points.length && i < this.length; i += 1) {
-      this.pointsData.push(points[i][0] - 250, points[i][1] - 250);
+      if (this.scene.mode === "ambient") {
+        const nx = (points[i][0] / 500 - 0.5) * 1.15;
+        const ny = (points[i][1] / 500 - 0.5) * 0.72;
+        this.pointsData.push(nx * 250, ny * 250);
+      } else {
+        this.pointsData.push(points[i][0] - 250, points[i][1] - 250);
+      }
     }
 
     this.count = this.pointsData.length / 2;
@@ -143,10 +150,14 @@ export class MainParticles {
         uRingWidth: { value: 0.05 },
         uRingWidth2: { value: 0.015 },
         uRingDisplacement: { value: this.scene.ringDisplacement },
+        uMotionStrength: { value: this.scene.mode === "ambient" ? 1 : 0 },
         uTime: { value: 0 }
       },
       vertexShader: simulationVertexShader,
-      fragmentShader: simulationFragmentShader(this.size)
+      fragmentShader:
+        this.scene.mode === "ambient"
+          ? ambientSimulationFragmentShader(this.size)
+          : simulationFragmentShader(this.size)
     });
     this.simQuad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), this.simMaterial);
     this.simScene.add(this.simQuad);
@@ -178,7 +189,7 @@ export class MainParticles {
         uColor1: { value: new THREE.Color(this.scene.colorControls.color1) },
         uColor2: { value: new THREE.Color(this.scene.colorControls.color2) },
         uColor3: { value: new THREE.Color(this.scene.colorControls.color3) },
-        uAlpha: { value: 1 },
+        uAlpha: { value: this.scene.alpha },
         uRingPos: { value: new THREE.Vector2(0, 0) },
         uRez: {
           value: new THREE.Vector2(
@@ -221,7 +232,9 @@ export class MainParticles {
     const noiseX = (this.noise.getVal(this.scene.time * 0.42 + 94.234) - 0.5) * 2;
     const noiseY = (this.noise.getVal(this.scene.time * 0.48 + 21.028) - 0.5) * 2;
 
-    if (this.scene.isIntersecting) {
+    if (this.scene.mode === "ambient") {
+      this.ringPos.set(0, 0);
+    } else if (this.scene.isIntersecting) {
       this.cursorPos.set(
         this.scene.intersectionPoint.x * 0.175 + noiseX * 0.1,
         this.scene.intersectionPoint.y * 0.175 + noiseY * 0.1
@@ -245,12 +258,14 @@ export class MainParticles {
     this.simMaterial.uniforms.uPosition.value = this.everRendered ? this.rt1.texture : this.posTex;
     this.simMaterial.uniforms.uTime.value = simulationTime;
     this.simMaterial.uniforms.uDeltaTime.value = deltaTime;
-    this.simMaterial.uniforms.uRingRadius.value =
-      0.175 + Math.sin(this.scene.time * 0.72) * 0.03 + Math.cos(this.scene.time * 2.1) * 0.02;
-    this.simMaterial.uniforms.uRingPos.value = this.ringPos;
-    this.simMaterial.uniforms.uRingWidth.value = this.scene.ringWidth;
-    this.simMaterial.uniforms.uRingWidth2.value = this.scene.ringWidth2;
-    this.simMaterial.uniforms.uRingDisplacement.value = this.scene.ringDisplacement;
+    if (this.scene.mode === "hero") {
+      this.simMaterial.uniforms.uRingRadius.value =
+        0.175 + Math.sin(this.scene.time * 0.72) * 0.03 + Math.cos(this.scene.time * 2.1) * 0.02;
+      this.simMaterial.uniforms.uRingPos.value = this.ringPos;
+      this.simMaterial.uniforms.uRingWidth.value = this.scene.ringWidth;
+      this.simMaterial.uniforms.uRingWidth2.value = this.scene.ringWidth2;
+      this.simMaterial.uniforms.uRingDisplacement.value = this.scene.ringDisplacement;
+    }
 
     this.renderer.setRenderTarget(this.rt2);
     this.renderer.render(this.simScene, this.simCamera);
