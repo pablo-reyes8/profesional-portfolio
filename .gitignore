@@ -3,4 +3,5 @@ inspo/
 agent/
 dist/
 .vite/
+*.tsbuildinfo
 *.local
