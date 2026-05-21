@@ -1,0 +1,6 @@
+node_modules/
+inspo/
+agent/
+dist/
+.vite/
+*.local
