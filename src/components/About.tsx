@@ -18,6 +18,7 @@ const skills = [
   { name: "OpenCV", icon: "opencv" },
   { name: "Pandas", icon: "pandas" },
   { name: "Docker", icon: "docker" },
+  { name: "Git", icon: "git" },
   { name: "GitHub Actions", icon: "githubactions" },
   { name: "Power BI", iconUrl: "https://cdn.simpleicons.org/powerbi/F2C811" },
   { name: "Kubernetes", icon: "kubernetes" },

@@ -781,15 +781,20 @@ function Projects() {
     activeCategory === "Advanced Deep Learning" ||
     activeCategory === "Econometrics" ||
     activeCategory === "Machine Learning Applications";
+  const hasOpenResults = Boolean(openResultsId);
 
   return (
     <section
       id="projects"
-      className={`projects-section ${usesTallProjectBackground ? "is-tall-projects" : ""}`}
+      className={[
+        "projects-section",
+        usesTallProjectBackground ? "is-tall-projects" : "",
+        hasOpenResults ? "is-results-open" : ""
+      ].filter(Boolean).join(" ")}
     >
       <AmbientParticleBackground
         className="projects-particles"
-        variant={usesTallProjectBackground ? "projectsTall" : "projects"}
+        variant={usesTallProjectBackground || hasOpenResults ? "projectsTall" : "projects"}
       />
       <div className="projects-container">
         <p className="section-eyebrow">Projects</p>

@@ -6,13 +6,24 @@ export const ambientSimulationFragmentShader = (
   layout: NonNullable<AntigravitySceneOptions["ambientLayout"]> = "field"
 ) => {
   const isProjectRibbons = layout === "project-ribbons" || layout === "project-tall-ribbons";
-  const timeScale = isProjectRibbons ? "0.052" : "0.055";
-  const flowScale = isProjectRibbons ? "0.058" : "0.043";
-  const fineScale = isProjectRibbons ? "0.017" : "0.009";
-  const driftScale = isProjectRibbons ? "0.82" : "0.72";
-  const settleRate = isProjectRibbons ? "0.023" : "0.026";
-  const scaleNoise = isProjectRibbons ? "0.078" : "0.055";
-  const projectFlow = isProjectRibbons
+  const isContact = layout === "contact-field";
+  const timeScale = isContact ? "0.044" : isProjectRibbons ? "0.052" : "0.055";
+  const flowScale = isContact ? "0.052" : isProjectRibbons ? "0.058" : "0.043";
+  const fineScale = isContact ? "0.012" : isProjectRibbons ? "0.017" : "0.009";
+  const driftScale = isContact ? "0.95" : isProjectRibbons ? "0.82" : "0.72";
+  const settleRate = isContact ? "0.019" : isProjectRibbons ? "0.023" : "0.026";
+  const scaleNoise = isContact ? "0.066" : isProjectRibbons ? "0.078" : "0.055";
+  const layoutFlow = isContact
+    ? `
+  vec2 upperCurrent = refPos - vec2(-0.12, 0.34);
+  vec2 lowerCurrent = refPos - vec2(0.26, -0.38);
+  vec2 verticalCurlA = vec2(upperCurrent.y * 0.42, -upperCurrent.x) * exp(-dot(upperCurrent, upperCurrent) * 2.6);
+  vec2 verticalCurlB = vec2(-lowerCurrent.y * 0.36, lowerCurrent.x) * exp(-dot(lowerCurrent, lowerCurrent) * 2.1);
+  float softColumn = sin(refPos.y * 9.0 + time * 1.2) * 0.015;
+  float sideBreath = cos(refPos.x * 5.6 - time * 0.9) * 0.017;
+  vec2 asymmetricLife = verticalCurlA * 0.048 + verticalCurlB * 0.042 + vec2(softColumn, sideBreath);
+`
+    : isProjectRibbons
     ? `
   vec2 offCenterA = refPos - vec2(-0.28, 0.16);
   vec2 offCenterB = refPos - vec2(0.34, -0.22);
@@ -60,7 +71,7 @@ void main() {
     cos(time * 0.55 + refPos.x * 2.0)
   ) * 0.018;
 
-${projectFlow}
+${layoutFlow}
   vec2 targetPos = refPos + (flow * ${flowScale} + fineFlow * ${fineScale} + globalDrift * ${driftScale} + asymmetricLife) * uMotionStrength;
   vec2 diff = targetPos - pos;
   pos += diff * ${settleRate};

@@ -22,7 +22,7 @@ export class AntigravityScene {
   readonly particlesScale: number;
   readonly density: number;
   readonly mode: "hero" | "ambient";
-  readonly ambientLayout: "field" | "project-ribbons" | "project-tall-ribbons";
+  readonly ambientLayout: "field" | "project-ribbons" | "project-tall-ribbons" | "contact-field";
   readonly alpha: number;
   readonly floatTextureType: THREE.TextureDataType;
 
@@ -39,13 +39,24 @@ export class AntigravityScene {
   dt = 0;
 
   private readonly onWindowResize = (): void => {
-    this.canvas.width = this.container.offsetWidth;
-    this.canvas.height = this.container.offsetHeight;
+    this.resize();
+  };
+
+  resize(): void {
+    const width = this.container.offsetWidth;
+    const height = this.container.offsetHeight;
+
+    if (!width || !height) {
+      return;
+    }
+
+    this.canvas.width = width;
+    this.canvas.height = height;
     this.renderer.setSize(this.canvas.width, this.canvas.height);
     this.camera.aspect = this.canvas.width / this.canvas.height;
     this.camera.updateProjectionMatrix();
     this.particles?.resize();
-  };
+  }
 
   constructor(options: AntigravitySceneOptions) {
     this.options = options;
