@@ -13,6 +13,10 @@
   background: rgba(255, 255, 255, 0.58);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+  transition:
+    background 240ms ease,
+    box-shadow 240ms ease,
+    transform 240ms ease;
 }
 
 .navbar-brand {
@@ -70,6 +74,7 @@
 }
 
 .navbar a {
+  position: relative;
   white-space: nowrap;
   transition:
     background-color 160ms ease,
@@ -79,8 +84,29 @@
     transform 160ms ease;
 }
 
+.navbar-links a::after {
+  position: absolute;
+  right: 0;
+  bottom: -0.42rem;
+  left: 0;
+  height: 2px;
+  border-radius: 999px;
+  background: #bd162c;
+  content: "";
+  opacity: 0;
+  transform: scaleX(0.35);
+  transition:
+    opacity 200ms ease,
+    transform 200ms ease;
+}
+
 .navbar a:hover {
   color: var(--color-text);
+}
+
+.navbar-links a:hover::after {
+  opacity: 1;
+  transform: scaleX(1);
 }
 
 .navbar-social-link:hover {

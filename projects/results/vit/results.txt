@@ -1,0 +1,51 @@
+## CIFAR-100 results 
+
+The table below reports the **best validation epoch observed** for each model (from my training runs).
+
+### Benchmark Protocol (this snapshot)
+These numbers come from **single runs** and are intended as a practical side-by-side snapshot.
+
+- **Dataset**: CIFAR-100 (torchvision), standard train/test.
+- **Input resolution**: 32×32.
+- **Data pipeline**: kept **highly consistent across families** (same CIFAR-100 loaders and preprocessing; HViT and Swin share the same training setup).
+- **Training recipe**:
+  - **HViT & Swin**: trained under the **same recipe** (optimizer/schedule/augmentations kept aligned).
+  - **MaxViT**: I ran additional experiments with **Mixup/CutMix**, so the training recipe is *close* but not identical.
+- **Reproducibility**: raw logs for each run are stored in `training_logs/` (`*.txt`).
+
+> **Interpretation note:** comparisons are strongest between **HViT vs Swin** (matched recipe).  
+> MaxViT numbers are still comparable, but reflect some extra augmentation experiments.
+
+<div align="center">
+
+| Model | Best epoch | Val loss | Top-1 | Top-3 | Top-5 |
+|---|---:|---:|---:|---:|---:|
+| **Hierarchical ViT (HViT)** | 43/50 | 2.0410 | **51.50%** | 71.20% | 78.40% |
+| **Swin Transformer** | 43/50 | 2.4145 | **51.04%** | 71.30% | **79.88%** |
+| **MaxViT** | 17/20 | 1.2132 | **66.68%** | **84.58%** | **89.92%** |
+| **VOLO (Vision Outlooker)** | 63/130 | 1.3082 | **67.90%** | 83.76% | 88.78% |## CIFAR-100 results 
+
+The table below reports the **best validation epoch observed** for each model (from my training runs).
+
+### Benchmark Protocol (this snapshot)
+These numbers come from **single runs** and are intended as a practical side-by-side snapshot.
+
+- **Dataset**: CIFAR-100 (torchvision), standard train/test.
+- **Input resolution**: 32×32.
+- **Data pipeline**: kept **highly consistent across families** (same CIFAR-100 loaders and preprocessing; HViT and Swin share the same training setup).
+- **Training recipe**:
+  - **HViT & Swin**: trained under the **same recipe** (optimizer/schedule/augmentations kept aligned).
+  - **MaxViT**: I ran additional experiments with **Mixup/CutMix**, so the training recipe is *close* but not identical.
+- **Reproducibility**: raw logs for each run are stored in `training_logs/` (`*.txt`).
+
+> **Interpretation note:** comparisons are strongest between **HViT vs Swin** (matched recipe).  
+> MaxViT numbers are still comparable, but reflect some extra augmentation experiments.
+
+<div align="center">
+
+| Model | Best epoch | Val loss | Top-1 | Top-3 | Top-5 |
+|---|---:|---:|---:|---:|---:|
+| **Hierarchical ViT (HViT)** | 43/50 | 2.0410 | **51.50%** | 71.20% | 78.40% |
+| **Swin Transformer** | 43/50 | 2.4145 | **51.04%** | 71.30% | **79.88%** |
+| **MaxViT** | 17/20 | 1.2132 | **66.68%** | **84.58%** | **89.92%** |
+| **VOLO (Vision Outlooker)** | 63/130 | 1.3082 | **67.90%** | 83.76% | 88.78% |

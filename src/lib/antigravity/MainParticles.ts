@@ -81,11 +81,17 @@ export class MainParticles {
       if (this.scene.mode === "ambient") {
         const rawX = points[i][0] / 500;
         const rawY = points[i][1] / 500;
-        const nx = (rawX - 0.5) * (this.scene.ambientLayout === "project-ribbons" ? 1.3 : 1.15);
-        const ribbon = Math.sin(rawX * 7.0 + rawY * 2.4) * 0.075;
+        const isProjectLayout =
+          this.scene.ambientLayout === "project-ribbons" ||
+          this.scene.ambientLayout === "project-tall-ribbons";
+        const isTallProjectLayout = this.scene.ambientLayout === "project-tall-ribbons";
+        const nx = (rawX - 0.5) * (isProjectLayout ? 1.36 : 1.15);
+        const ribbon =
+          Math.sin(rawX * 7.0 + rawY * 2.4) * 0.075 +
+          Math.cos(rawX * 3.1 - rawY * 5.4) * 0.035;
         const ny =
-          this.scene.ambientLayout === "project-ribbons"
-            ? (rawY - 0.5) * 0.62 + ribbon
+          isProjectLayout
+            ? (rawY - 0.5) * (isTallProjectLayout ? 1.18 : 0.66) + ribbon
             : (rawY - 0.5) * 0.72;
         this.pointsData.push(nx * 250, ny * 250);
       } else {
@@ -162,7 +168,7 @@ export class MainParticles {
       vertexShader: simulationVertexShader,
       fragmentShader:
         this.scene.mode === "ambient"
-          ? ambientSimulationFragmentShader(this.size)
+          ? ambientSimulationFragmentShader(this.size, this.scene.ambientLayout)
           : simulationFragmentShader(this.size)
     });
     this.simQuad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), this.simMaterial);

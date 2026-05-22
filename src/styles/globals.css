@@ -18,6 +18,7 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--navbar-height) + 18px);
 }
 
 body {
@@ -35,7 +36,15 @@ a {
   text-decoration: none;
 }
 
+section {
+  scroll-margin-top: calc(var(--navbar-height) + 18px);
+}
+
 button,
 a {
   -webkit-tap-highlight-color: transparent;
+}
+
+body.is-section-scrolling .navbar {
+  box-shadow: 0 18px 56px rgba(16, 16, 20, 0.08);
 }

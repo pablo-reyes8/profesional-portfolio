@@ -1,0 +1,8 @@
+## 6. Model Results Summary
+The following table summarizes key reference results obtained in the modeling notebook (`notebooks/Full Maching Learning Modeling.ipynb`):
+
+| Model / Strategy | Precision (Subsidio=1) | Recall (Subsidio=1) | F1 (Subsidio=1) | Main Trade-off |
+|---|---:|---:|---:|---|
+| Cascade (XGBoost + RF + threshold tuning) | 0.218 | 0.711 | ~0.33 | Meets recall target with moderate precision |
+| One-Class SVM (anomaly framing) | 0.934 | 0.264 | 0.411 | Very high precision, low recall |
+| IsolationForest (anomaly framing) | 0.926 | 0.303 | 0.457 | Very high precision, low recall |

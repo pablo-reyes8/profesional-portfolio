@@ -3,7 +3,7 @@ import { AntigravityScene } from "../lib/antigravity/AntigravityScene";
 
 interface AmbientParticleBackgroundProps {
   className?: string;
-  variant?: "about" | "projects";
+  variant?: "about" | "projects" | "projectsTall";
 }
 
 function AmbientParticleBackground({ className, variant = "about" }: AmbientParticleBackgroundProps) {
@@ -18,11 +18,16 @@ function AmbientParticleBackground({ className, variant = "about" }: AmbientPart
       container: containerRef.current,
       theme: "light",
       mode: "ambient",
-      ambientLayout: variant === "projects" ? "project-ribbons" : "field",
+      ambientLayout:
+        variant === "projectsTall"
+          ? "project-tall-ribbons"
+          : variant === "projects"
+            ? "project-ribbons"
+            : "field",
       interactive: false,
-      density: variant === "projects" ? 150 : 165,
-      particlesScale: variant === "projects" ? 0.82 : 0.87,
-      alpha: variant === "projects" ? 0.92 : 1.3,
+      density: variant === "projectsTall" ? 260 : variant === "projects" ? 195 : 165,
+      particlesScale: variant === "projectsTall" ? 1.34 : variant === "projects" ? 1.24 : 0.87,
+      alpha: variant === "projectsTall" ? 1.34 : variant === "projects" ? 1.26 : 1.3,
       ringDisplacement: 0
     });
 
