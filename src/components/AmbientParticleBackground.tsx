@@ -28,8 +28,8 @@ function AmbientParticleBackground({ className, variant = "about" }: AmbientPart
             : "field",
       interactive: false,
       density: variant === "contact" ? 190 : variant === "projectsTall" ? 275 : variant === "projects" ? 195 : 165,
-      particlesScale: variant === "contact" ? 1.08 : variant === "projectsTall" ? 1.42 : variant === "projects" ? 1.24 : 0.87,
-      alpha: variant === "contact" ? 1.18 : variant === "projectsTall" ? 1.42 : variant === "projects" ? 1.26 : 1.3,
+      particlesScale: variant === "contact" ? 1.32 : variant === "projectsTall" ? 1.42 : variant === "projects" ? 1.24 : 0.87,
+      alpha: variant === "contact" ? 1.28 : variant === "projectsTall" ? 1.42 : variant === "projects" ? 1.26 : 1.3,
       ringDisplacement: 0
     });
 
