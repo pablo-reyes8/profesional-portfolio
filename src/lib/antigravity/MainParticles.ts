@@ -219,6 +219,7 @@ export class MainParticles {
         },
         uParticleScale: { value: this.particleScale },
         uPixelRatio: { value: this.scene.pixelRatio },
+        uColorFloor: { value: this.scene.colorFloor },
         uColorScheme: { value: this.colorScheme }
       },
       vertexShader: renderVertexShader,

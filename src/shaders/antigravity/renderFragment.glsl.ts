@@ -16,6 +16,7 @@ uniform vec2 uRingPos;
 uniform vec2 uRez;
 uniform float uAlpha;
 uniform float uTime;
+uniform float uColorFloor;
 uniform int uColorScheme;
 
 ${simplexNoise}
@@ -81,7 +82,8 @@ void main() {
   }
 
   color = clamp(color, 0.0, 1.0);
-  color = mix(color, color * clamp(vVelocity, 0.0, 1.0), float(uColorScheme));
+  float colorEnergy = max(clamp(vVelocity, 0.0, 1.0), uColorFloor * smoothstep(0.28, 1.0, noiseColor));
+  color = mix(color, color * colorEnergy, float(uColorScheme));
 
   gl_FragColor = vec4(color, clamp(a, 0.0, 1.0));
 }

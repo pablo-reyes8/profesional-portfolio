@@ -24,6 +24,7 @@ export class AntigravityScene {
   readonly mode: "hero" | "ambient";
   readonly ambientLayout: "field" | "project-ribbons" | "project-tall-ribbons" | "contact-field";
   readonly alpha: number;
+  readonly colorFloor: number;
   readonly floatTextureType: THREE.TextureDataType;
 
   ringWidth: number;
@@ -69,6 +70,7 @@ export class AntigravityScene {
     this.particlesScale = options.particlesScale || 0.75;
     this.density = options.density || 200;
     this.alpha = options.alpha ?? 1;
+    this.colorFloor = options.colorFloor ?? 0;
     this.ringWidth = options.ringWidth || 0.107;
     this.ringWidth2 = options.ringWidth2 || 0.05;
     this.ringDisplacement = options.ringDisplacement || 0.15;
@@ -117,11 +119,12 @@ export class AntigravityScene {
       this.scene.add(this.raycastPlane);
     }
 
-    this.colorControls = {
+    const defaultColors = {
       color1: this.theme === "dark" ? "#7189ff" : "#2c64ed",
       color2: this.theme === "dark" ? "#3074f9" : "#f84242",
       color3: this.theme === "dark" ? "#000000" : "#ffcf03"
     };
+    this.colorControls = { ...defaultColors, ...options.colors };
 
     this.initParticles();
     this.initEvents();

@@ -1,4 +1,4 @@
-import { useMemo, useState, type CSSProperties } from "react";
+import { useMemo, useRef, useState, type CSSProperties, type MouseEvent } from "react";
 import AmbientParticleBackground from "./AmbientParticleBackground";
 
 type ProjectCategory =
@@ -735,6 +735,8 @@ function Projects() {
   const [activeCategory, setActiveCategory] = useState<ProjectCategory>("Feature");
   const [expandedId, setExpandedId] = useState<string>("");
   const [openResultsId, setOpenResultsId] = useState<string>("");
+  const [closingId, setClosingId] = useState<string>("");
+  const closeTimeoutRef = useRef<number | null>(null);
 
   const visibleProjects = useMemo(
     () => projects.filter((project) => project.category === activeCategory),
@@ -765,16 +767,57 @@ function Projects() {
   }, [expandedId, visibleProjects]);
 
   const handleCategoryChange = (category: ProjectCategory): void => {
+    if (closeTimeoutRef.current !== null) {
+      window.clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
     setActiveCategory(category);
     setExpandedId("");
     setOpenResultsId("");
+    setClosingId("");
   };
 
   const handleProjectOpen = (projectId: string): void => {
+    if (closeTimeoutRef.current !== null) {
+      window.clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
     if (expandedId !== projectId) {
       setOpenResultsId("");
     }
+    setClosingId("");
     setExpandedId(projectId);
+  };
+
+  const closeExpandedProject = (): void => {
+    if (!expandedId || closingId) {
+      return;
+    }
+
+    setOpenResultsId("");
+    setClosingId(expandedId);
+    closeTimeoutRef.current = window.setTimeout(() => {
+      setExpandedId("");
+      setClosingId("");
+      closeTimeoutRef.current = null;
+    }, 190);
+  };
+
+  const handleSectionClick = (event: MouseEvent<HTMLElement>): void => {
+    if (!expandedId) {
+      return;
+    }
+
+    const target = event.target as Element;
+    if (
+      target.closest(".project-card.is-expanded") ||
+      target.closest(".project-card") ||
+      target.closest(".project-tabs")
+    ) {
+      return;
+    }
+
+    closeExpandedProject();
   };
 
   const usesTallProjectBackground =
@@ -786,6 +829,7 @@ function Projects() {
   return (
     <section
       id="projects"
+      onClick={handleSectionClick}
       className={[
         "projects-section",
         usesTallProjectBackground ? "is-tall-projects" : "",
@@ -824,7 +868,7 @@ function Projects() {
             const stackItems = isExpanded ? project.stack : project.stack.slice(0, 4);
             return (
               <article
-                className={`project-card ${isExpanded ? "is-expanded" : ""}`}
+                className={`project-card ${isExpanded ? "is-expanded" : ""} ${closingId === project.id ? "is-closing" : ""}`}
                 key={project.id}
                 role="button"
                 tabIndex={0}
@@ -888,8 +932,7 @@ function Projects() {
                       type="button"
                       onClick={(event) => {
                         event.stopPropagation();
-                        setExpandedId("");
-                        setOpenResultsId("");
+                        closeExpandedProject();
                       }}
                     >
                       Back

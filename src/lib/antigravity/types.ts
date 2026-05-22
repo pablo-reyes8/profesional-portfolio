@@ -6,6 +6,8 @@ export interface AntigravitySceneOptions {
   particlesScale?: number;
   density?: number;
   alpha?: number;
+  colorFloor?: number;
+  colors?: AntigravityColorOverrides;
   interactive?: boolean;
   gui?: boolean;
   verbose?: boolean;
@@ -20,5 +22,7 @@ export interface AntigravityColorControls {
   color2: string;
   color3: string;
 }
+
+export type AntigravityColorOverrides = Partial<AntigravityColorControls>;
 
 export type PoissonPointTuple = [number, number];

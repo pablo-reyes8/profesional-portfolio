@@ -30,6 +30,15 @@ function AmbientParticleBackground({ className, variant = "about" }: AmbientPart
       density: variant === "contact" ? 190 : variant === "projectsTall" ? 275 : variant === "projects" ? 195 : 165,
       particlesScale: variant === "contact" ? 1.32 : variant === "projectsTall" ? 1.42 : variant === "projects" ? 1.24 : 0.87,
       alpha: variant === "contact" ? 1.28 : variant === "projectsTall" ? 1.42 : variant === "projects" ? 1.26 : 1.3,
+      colorFloor: variant === "contact" ? 0.44 : variant === "projectsTall" ? 0.34 : variant === "projects" ? 0.3 : 0,
+      colors:
+        variant === "projects" || variant === "projectsTall" || variant === "contact"
+          ? {
+              color1: "#2a0d16",
+              color2: "#bd162c",
+              color3: "#ffb21c"
+            }
+          : undefined,
       ringDisplacement: 0
     });
 
