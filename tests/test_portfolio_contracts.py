@@ -86,12 +86,22 @@ def test_spanish_language_toggle_and_footer_copy_are_covered() -> None:
 
 
 def test_mobile_responsive_polish_for_stack_and_formation_is_preserved() -> None:
+    about = read("src/components/About.tsx")
     styles = read("src/styles/hero.css")
 
+    assert '{ name: "PyTorch", icon: "pytorch" }' in about
+    assert '{ name: "TensorFlow", icon: "tensorflow" }' in about
+    assert '{ name: "MongoDB", icon: "mongodb" }' in about
+    assert '{ name: "Pandas", icon: "pandas" }' not in about
+    assert '{ name: "GitHub", icon: "github" }' in about
+    assert '{ name: "GitHub Actions", icon: "githubactions" }' not in about
+    assert '{ name: "Stata", iconUrl: "/logos/file_type_stata_icon_130148.png" }' in about
+    assert '{ name: "Power BI", iconUrl: "/logos/New_Power_BI_Logo.png" }' in about
     assert "@media (max-width: 760px)" in styles
     assert ".stack-panel" in styles
-    assert "min-height: 548px" in styles
-    assert ".skill-bubble:nth-child(18) { left: 82%; top: 86%; }" in styles
+    assert "min-height: 590px" in styles
+    assert ".skill-bubble:nth-child(18) { left: 30%; top: 93%; }" in styles
+    assert ".skill-bubble:nth-child(19) { left: 76%; top: 93%; }" in styles
     assert "@media (max-width: 620px)" in styles
     assert "max-height: min(78vh, 34rem)" in styles
     assert "scrollbar-width: thin" in styles

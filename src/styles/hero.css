@@ -388,9 +388,10 @@
 .skill-bubble:nth-child(13) { left: 17%; top: 75%; }
 .skill-bubble:nth-child(14) { left: 47%; top: 76%; }
 .skill-bubble:nth-child(15) { left: 78%; top: 79%; }
-.skill-bubble:nth-child(16) { left: 23%; top: 90%; }
-.skill-bubble:nth-child(17) { left: 52%; top: 91%; }
-.skill-bubble:nth-child(18) { left: 78%; top: 90%; }
+.skill-bubble:nth-child(16) { left: 18%; top: 90%; }
+.skill-bubble:nth-child(17) { left: 43%; top: 91%; }
+.skill-bubble:nth-child(18) { left: 66%; top: 90%; }
+.skill-bubble:nth-child(19) { left: 86%; top: 90%; }
 
 .skill-bubble:hover {
   z-index: 4;
@@ -432,7 +433,7 @@
   }
 
   .stack-panel {
-    min-height: 548px;
+    min-height: 590px;
   }
 
   .stack-cloud {
@@ -440,10 +441,10 @@
   }
 
   .skill-bubble {
-    min-height: 38px;
+    min-height: 36px;
     gap: 0.42rem;
-    padding: 0 0.68rem;
-    font-size: 0.84rem;
+    padding: 0 0.6rem;
+    font-size: 0.8rem;
   }
 
   .skill-icon {
@@ -451,9 +452,25 @@
     height: 1rem;
   }
 
-  .skill-bubble:nth-child(16) { left: 23%; top: 86%; }
-  .skill-bubble:nth-child(17) { left: 49%; top: 87%; }
-  .skill-bubble:nth-child(18) { left: 82%; top: 86%; }
+  .skill-bubble:nth-child(1) { left: 20%; top: 11%; }
+  .skill-bubble:nth-child(2) { left: 48%; top: 10%; }
+  .skill-bubble:nth-child(3) { left: 75%; top: 13%; }
+  .skill-bubble:nth-child(4) { left: 25%; top: 24%; }
+  .skill-bubble:nth-child(5) { left: 55%; top: 27%; }
+  .skill-bubble:nth-child(6) { left: 82%; top: 31%; }
+  .skill-bubble:nth-child(7) { left: 20%; top: 40%; }
+  .skill-bubble:nth-child(8) { left: 50%; top: 41%; }
+  .skill-bubble:nth-child(9) { left: 81%; top: 44%; }
+  .skill-bubble:nth-child(10) { left: 28%; top: 55%; }
+  .skill-bubble:nth-child(11) { left: 62%; top: 55%; }
+  .skill-bubble:nth-child(12) { left: 84%; top: 61%; }
+  .skill-bubble:nth-child(13) { left: 20%; top: 68%; }
+  .skill-bubble:nth-child(14) { left: 51%; top: 69%; }
+  .skill-bubble:nth-child(15) { left: 80%; top: 70%; }
+  .skill-bubble:nth-child(16) { left: 28%; top: 80%; }
+  .skill-bubble:nth-child(17) { left: 72%; top: 80%; }
+  .skill-bubble:nth-child(18) { left: 30%; top: 93%; }
+  .skill-bubble:nth-child(19) { left: 76%; top: 93%; }
 }
 
 .projects-section {

@@ -5,24 +5,25 @@ import { useLanguage } from "../i18n";
 const skills = [
   { name: "Python", icon: "python" },
   { name: "R", icon: "r" },
-  { name: "Stata", icon: "stata" },
+  { name: "PyTorch", icon: "pytorch" },
+  { name: "Stata", iconUrl: "/logos/file_type_stata_icon_130148.png" },
   {
     name: "MATLAB",
     iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/matlab/matlab-original.svg"
   },
   { name: "SQL", icon: "postgresql" },
   { name: "LaTeX", icon: "latex" },
-  { name: "PyTorch", icon: "pytorch" },
+  { name: "TensorFlow", icon: "tensorflow" },
   { name: "FastAPI", icon: "fastapi" },
   { name: "scikit-learn", icon: "scikitlearn" },
   { name: "Hugging Face", icon: "huggingface" },
   { name: "OpenCV", icon: "opencv" },
-  { name: "Pandas", icon: "pandas" },
+  { name: "MongoDB", icon: "mongodb" },
   { name: "Docker", icon: "docker" },
-  { name: "Git", icon: "git" },
-  { name: "GitHub Actions", icon: "githubactions" },
-  { name: "Power BI", iconUrl: "https://cdn.simpleicons.org/powerbi/F2C811" },
   { name: "Kubernetes", icon: "kubernetes" },
+  { name: "GitHub", icon: "github" },
+  { name: "Power BI", iconUrl: "/logos/New_Power_BI_Logo.png" },
+  { name: "Git", icon: "git" },
   { name: "Airflow", icon: "apacheairflow" }
 ];
 
