@@ -135,14 +135,7 @@ function Experience() {
       const navbarHeight = Number.parseFloat(
         getComputedStyle(document.documentElement).getPropertyValue("--navbar-height")
       ) || 64;
-      const contentRoot = sectionContent.closest("main");
-      const targetTop = Math.max(
-        0,
-        sectionContent.getBoundingClientRect().top -
-          (contentRoot?.getBoundingClientRect().top || 0) -
-          navbarHeight -
-          28
-      );
+      const targetTop = Math.max(0, sectionContent.getBoundingClientRect().top + window.scrollY - navbarHeight - 28);
 
       window.dispatchEvent(
         new CustomEvent("portfolio:smooth-scroll-to", {

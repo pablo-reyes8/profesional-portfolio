@@ -98,7 +98,31 @@ function Contact() {
             <button type="submit">{t("Send Message")}</button>
           </form>
         </div>
+
       </div>
+
+      <footer className="portfolio-footer" aria-label={t("Portfolio footer")}>
+        <div className="portfolio-footer-inner">
+          <div className="portfolio-footer-identity">
+            <strong>Pablo Reyes</strong>
+            <span>{t("Economist & Data Scientist")}</span>
+          </div>
+
+          <p>{t("Research, data systems, and machine learning built as professional code.")}</p>
+
+          <nav aria-label={t("Footer links")}>
+            <a href="https://github.com/pablo-reyes8" target="_blank" rel="noreferrer">
+              GitHub
+            </a>
+            <a href="https://www.linkedin.com/in/pablo-alejandro-reyes-granados/" target="_blank" rel="noreferrer">
+              LinkedIn
+            </a>
+            <a href="/cv/Hoja_de_Vida_Industria.pdf" target="_blank" rel="noreferrer">
+              CV
+            </a>
+          </nav>
+        </div>
+      </footer>
     </section>
   );
 }

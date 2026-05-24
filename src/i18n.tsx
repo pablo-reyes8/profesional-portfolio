@@ -61,6 +61,13 @@ const translations: Record<string, string> = {
   "Send Message": "Enviar mensaje",
   "Portfolio contact from": "Contacto desde portafolio de",
   Visitor: "Visitante",
+  "Portfolio footer": "Cierre del portafolio",
+  "Footer links": "Enlaces finales",
+  "Designed & Developed by": "Diseñado y desarrollado por",
+  "Research, data systems, and machine learning built as working code.":
+    "Investigación, sistemas de datos y machine learning como código funcional.",
+  "Research, data systems, and machine learning built as professional code.":
+    "Investigación, sistemas de datos y machine learning como código profesional.",
 
   "Research experience in machine learning and economics.": "Experiencia en machine learning y economía.",
   "My current work connects empirical economic research with production-minded data pipelines and deep learning systems for high-impact social problems.":

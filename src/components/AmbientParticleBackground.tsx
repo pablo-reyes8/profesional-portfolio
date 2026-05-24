@@ -32,7 +32,7 @@ function AmbientParticleBackground({ className, variant = "about" }: AmbientPart
             : "field",
       interactive: false,
       density: variant === "contact" ? 190 : variant === "formation" ? 205 : variant === "experience" ? 265 : variant === "projectsTall" ? 275 : variant === "projects" ? 195 : 165,
-      particlesScale: variant === "contact" ? 1.32 : variant === "formation" ? 0.9 : variant === "experience" ? 1.01 : variant === "projectsTall" ? 1.52 : variant === "projects" ? 1.24 : 0.87,
+      particlesScale: variant === "contact" ? 1.32 : variant === "formation" ? 0.9 : variant === "experience" ? 0.9 : variant === "projectsTall" ? 1.31 : variant === "projects" ? 1.24 : 0.87,
       alpha: variant === "contact" ? 1.28 : variant === "formation" ? 1.5 : variant === "experience" ? 1.84 : variant === "projectsTall" ? 1.42 : variant === "projects" ? 1.26 : 1.3,
       colorFloor: variant === "contact" ? 0.44 : variant === "formation" ? 0.42 : variant === "experience" ? 0.88 : variant === "projectsTall" ? 0.34 : variant === "projects" ? 0.3 : 0,
       colors:

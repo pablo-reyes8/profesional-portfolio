@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import About from "./components/About";
 import Contact from "./components/Contact";
 import Experience from "./components/Experience";
@@ -9,12 +9,8 @@ import Projects from "./components/Projects";
 import { LanguageProvider } from "./i18n";
 
 function App() {
-  const contentRef = useRef<HTMLElement>(null);
-
   useEffect(() => {
-    const content = contentRef.current;
     const reduceMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const cleanups: Array<() => void> = [];
 
     const clampScrollTarget = (target: number): number => {
       const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
@@ -27,64 +23,6 @@ function App() {
         behavior: reduceMotionQuery.matches ? "auto" : "smooth"
       });
     };
-
-    const getContentScrollTop = (element: HTMLElement): number => {
-      if (!content) {
-        return element.getBoundingClientRect().top + window.scrollY;
-      }
-
-      return element.getBoundingClientRect().top - content.getBoundingClientRect().top;
-    };
-
-    if (!content || reduceMotionQuery.matches) {
-      document.body.style.removeProperty("height");
-      content?.style.removeProperty("transform");
-      content?.classList.remove("smooth-scroll-content");
-    } else {
-      let renderedScroll = window.scrollY;
-      let animationFrame = 0;
-
-      const setBodyHeight = (): void => {
-        document.body.style.height = `${content.scrollHeight}px`;
-      };
-
-      const renderSmoothScroll = (): void => {
-        const targetScroll = window.scrollY;
-        const distance = targetScroll - renderedScroll;
-
-        renderedScroll += distance * 0.095;
-
-        if (Math.abs(distance) < 0.08) {
-          renderedScroll = targetScroll;
-        }
-
-        content.style.transform = `translate3d(0, ${-renderedScroll}px, 0)`;
-        animationFrame = window.requestAnimationFrame(renderSmoothScroll);
-      };
-
-      content.classList.add("smooth-scroll-content");
-      setBodyHeight();
-      animationFrame = window.requestAnimationFrame(renderSmoothScroll);
-
-      const resizeObserver = new ResizeObserver(setBodyHeight);
-      resizeObserver.observe(content);
-      window.addEventListener("resize", setBodyHeight);
-
-      const handleMotionPreferenceChange = (): void => {
-        window.location.reload();
-      };
-
-      reduceMotionQuery.addEventListener("change", handleMotionPreferenceChange);
-      cleanups.push(() => {
-        window.cancelAnimationFrame(animationFrame);
-        resizeObserver.disconnect();
-        window.removeEventListener("resize", setBodyHeight);
-        reduceMotionQuery.removeEventListener("change", handleMotionPreferenceChange);
-        document.body.style.removeProperty("height");
-        content.style.removeProperty("transform");
-        content.classList.remove("smooth-scroll-content");
-      });
-    }
 
     const handleClick = (event: MouseEvent): void => {
       const link = (event.target as Element | null)?.closest<HTMLAnchorElement>("a[href^='#']");
@@ -113,7 +51,7 @@ function App() {
       const targetTop =
         hash === "#top"
           ? 0
-          : getContentScrollTop(scrollTarget) - navbarHeight - 28;
+          : scrollTarget.getBoundingClientRect().top + window.scrollY - navbarHeight - 28;
 
       document.body.classList.add("is-section-scrolling");
       scrollToPageTarget(targetTop);
@@ -143,14 +81,58 @@ function App() {
     return () => {
       document.removeEventListener("click", handleClick);
       window.removeEventListener("portfolio:smooth-scroll-to", handleSmoothScrollRequest);
-      cleanups.forEach((cleanup) => cleanup());
+    };
+  }, []);
+
+  useEffect(() => {
+    const sections = Array.from(document.querySelectorAll<HTMLElement>("main > section"));
+
+    sections.forEach((section, index) => {
+      section.classList.add("section-transition");
+      section.style.setProperty("--section-index", String(index));
+    });
+
+    if (!("IntersectionObserver" in window)) {
+      sections.forEach((section) => section.classList.add("is-in-view"));
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const section = entry.target as HTMLElement;
+
+          if (entry.isIntersecting) {
+            section.classList.add("is-in-view");
+            section.classList.toggle("is-section-active", entry.intersectionRatio > 0.42);
+          } else {
+            section.classList.remove("is-in-view");
+            section.classList.remove("is-section-active");
+          }
+        });
+      },
+      {
+        root: null,
+        rootMargin: "-16% 0px -20%",
+        threshold: [0.12, 0.42, 0.72]
+      }
+    );
+
+    sections.forEach((section) => observer.observe(section));
+
+    return () => {
+      observer.disconnect();
+      sections.forEach((section) => {
+        section.classList.remove("section-transition", "is-in-view", "is-section-active");
+        section.style.removeProperty("--section-index");
+      });
     };
   }, []);
 
   return (
     <LanguageProvider>
       <Navbar />
-      <main ref={contentRef}>
+      <main>
         <Hero />
         <About />
         <Projects />

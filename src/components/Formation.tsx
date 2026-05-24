@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type MouseEvent } from "react";
 import AmbientParticleBackground from "./AmbientParticleBackground";
 import { useLanguage } from "../i18n";
 
@@ -165,8 +165,21 @@ function Formation() {
   const [openGroup, setOpenGroup] = useState("Deep Learning Specialization");
   const [expandedEducation, setExpandedEducation] = useState("");
 
+  const handleSectionClick = (event: MouseEvent<HTMLElement>): void => {
+    if (!expandedEducation) {
+      return;
+    }
+
+    const target = event.target as Element;
+    if (target.closest(".formation-card")) {
+      return;
+    }
+
+    setExpandedEducation("");
+  };
+
   return (
-    <section id="formation" className="formation-section">
+    <section id="formation" className="formation-section" onClick={handleSectionClick}>
       <AmbientParticleBackground className="formation-particles" variant="formation" />
 
       <div className="formation-container">
