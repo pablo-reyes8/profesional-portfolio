@@ -502,6 +502,18 @@ const projects: ProjectItem[] = [
     results: ["512px model training path", "54+ epoch sample progress", "CLI pipeline for data, training, inference, evaluation"]
   },
   {
+    id: "style-transfer",
+    category: "Advanced Deep Learning",
+    title: "Attention-Guided Style Transfer",
+    source: "styletransfer.md",
+    github: "https://github.com/pablo-reyes8/a2k-style-transfer",
+    summary: "A feed-forward artistic style transfer system with multi-level attention fusion and moment-aware perceptual losses.",
+    detail:
+      "Combines a frozen VGG19 encoder, cross-attention over content and style features, AdaIN-inspired decoding, Gram and moment matching, total variation regularization, mixed precision, and SOTA-vs-baseline qualitative comparisons.",
+    stack: ["Python", "PyTorch", "VGG19", "Attention", "AdaIN", "AMP"],
+    results: ["Cleaner brushwork and color transfer", "Baseline vs SOTA comparisons", "High-resolution stylization workflow"]
+  },
+  {
     id: "vision-transformers",
     category: "Advanced Deep Learning",
     title: "Vision Transformer Comparison Arena",
@@ -656,18 +668,6 @@ const projects: ProjectItem[] = [
       "Transforms fragmented media sources into a structured map of news trends by combining scraping, cleaning, topic analysis, sentiment analysis, named-entity recognition, and API-oriented cleanup.",
     stack: ["Python", "NLP", "Scraping", "NER", "Topic Modeling", "Spanish Text"],
     results: ["Multi-source Colombian media corpus", "Topic, sentiment, and entity outputs", "Structured trend analysis"]
-  },
-  {
-    id: "style-transfer",
-    category: "Advanced Deep Learning",
-    title: "Attention-Guided Style Transfer",
-    source: "styletransfer.md",
-    github: "https://github.com/pablo-reyes8/a2k-style-transfer",
-    summary: "A feed-forward artistic style transfer system with multi-level attention fusion and moment-aware perceptual losses.",
-    detail:
-      "Combines a frozen VGG19 encoder, cross-attention over content and style features, AdaIN-inspired decoding, Gram and moment matching, total variation regularization, mixed precision, and SOTA-vs-baseline qualitative comparisons.",
-    stack: ["Python", "PyTorch", "VGG19", "Attention", "AdaIN", "AMP"],
-    results: ["Cleaner brushwork and color transfer", "Baseline vs SOTA comparisons", "High-resolution stylization workflow"]
   },
   {
     id: "ddpm",

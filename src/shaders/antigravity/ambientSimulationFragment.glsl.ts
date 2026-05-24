@@ -8,12 +8,13 @@ export const ambientSimulationFragmentShader = (
   const isProjectRibbons = layout === "project-ribbons" || layout === "project-tall-ribbons";
   const isContact = layout === "contact-field";
   const isExperience = layout === "experience-stream";
-  const timeScale = isContact ? "0.044" : isExperience ? "0.047" : isProjectRibbons ? "0.052" : "0.055";
-  const flowScale = isContact ? "0.052" : isExperience ? "0.049" : isProjectRibbons ? "0.058" : "0.043";
-  const fineScale = isContact ? "0.012" : isExperience ? "0.014" : isProjectRibbons ? "0.017" : "0.009";
-  const driftScale = isContact ? "0.95" : isExperience ? "0.88" : isProjectRibbons ? "0.82" : "0.72";
-  const settleRate = isContact ? "0.019" : isExperience ? "0.021" : isProjectRibbons ? "0.023" : "0.026";
-  const scaleNoise = isContact ? "0.066" : isExperience ? "0.07" : isProjectRibbons ? "0.078" : "0.055";
+  const isFormation = layout === "formation-bands";
+  const timeScale = isContact ? "0.044" : isFormation ? "0.045" : isExperience ? "0.047" : isProjectRibbons ? "0.052" : "0.055";
+  const flowScale = isContact ? "0.052" : isFormation ? "0.051" : isExperience ? "0.049" : isProjectRibbons ? "0.058" : "0.043";
+  const fineScale = isContact ? "0.012" : isFormation ? "0.013" : isExperience ? "0.014" : isProjectRibbons ? "0.017" : "0.009";
+  const driftScale = isContact ? "0.95" : isFormation ? "0.86" : isExperience ? "0.88" : isProjectRibbons ? "0.82" : "0.72";
+  const settleRate = isContact ? "0.019" : isFormation ? "0.02" : isExperience ? "0.021" : isProjectRibbons ? "0.023" : "0.026";
+  const scaleNoise = isContact ? "0.066" : isFormation ? "0.074" : isExperience ? "0.07" : isProjectRibbons ? "0.078" : "0.055";
   const layoutFlow = isContact
     ? `
   vec2 upperCurrent = refPos - vec2(-0.12, 0.34);
@@ -23,6 +24,16 @@ export const ambientSimulationFragmentShader = (
   float softColumn = sin(refPos.y * 9.0 + time * 1.2) * 0.015;
   float sideBreath = cos(refPos.x * 5.6 - time * 0.9) * 0.017;
   vec2 asymmetricLife = verticalCurlA * 0.048 + verticalCurlB * 0.042 + vec2(softColumn, sideBreath);
+`
+    : isFormation
+    ? `
+  vec2 bandA = refPos - vec2(-0.34, 0.18);
+  vec2 bandB = refPos - vec2(0.38, -0.2);
+  vec2 longArcA = vec2(-bandA.y * 0.34, bandA.x) * exp(-dot(bandA, bandA) * 2.0);
+  vec2 longArcB = vec2(bandB.y * 0.3, -bandB.x) * exp(-dot(bandB, bandB) * 2.45);
+  float horizontalBand = sin(refPos.x * 10.2 + time * 1.05) * 0.018;
+  float studyPulse = cos((refPos.x + refPos.y * 1.7) * 5.5 - time * 0.9) * 0.014;
+  vec2 asymmetricLife = longArcA * 0.042 + longArcB * 0.036 + vec2(studyPulse, horizontalBand);
 `
     : isExperience
     ? `
