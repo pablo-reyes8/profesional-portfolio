@@ -5,3 +5,5 @@ dist/
 .vite/
 *.tsbuildinfo
 *.local
+__pycache__/
+.pytest_cache/

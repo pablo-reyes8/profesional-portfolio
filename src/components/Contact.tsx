@@ -1,7 +1,24 @@
 import { useState, type FormEvent } from "react";
 import AmbientParticleBackground from "./AmbientParticleBackground";
 
-const contactEmail = "alejoreyes229@gmail.com";
+const encodedRecipient = [
+  108, 120, 114, 120, 126, 130, 118, 132, 113, 128, 64, 65, 73, 81, 114, 121, 110, 119, 123, 62,
+  116, 122, 121
+];
+const encodedMailProtocol = [118, 107, 116, 120, 129, 120, 68];
+
+function decodeSequence(values: number[], offsetBase: number, offsetCycle: number): string {
+  return values
+    .map((value, index) => String.fromCharCode(value - (index % offsetCycle) - offsetBase))
+    .join("");
+}
+
+function getContactTarget(): string {
+  return [
+    decodeSequence(encodedMailProtocol, 9, 5),
+    decodeSequence(encodedRecipient, 11, 7)
+  ].join("");
+}
 
 function Contact() {
   const [name, setName] = useState("");
@@ -21,7 +38,7 @@ function Contact() {
       ].join("\n")
     );
 
-    window.location.href = `mailto:${contactEmail}?subject=${subject}&body=${body}`;
+    window.location.href = `${getContactTarget()}?subject=${subject}&body=${body}`;
   };
 
   return (

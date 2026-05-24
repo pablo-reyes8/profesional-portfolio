@@ -7,12 +7,13 @@ export const ambientSimulationFragmentShader = (
 ) => {
   const isProjectRibbons = layout === "project-ribbons" || layout === "project-tall-ribbons";
   const isContact = layout === "contact-field";
-  const timeScale = isContact ? "0.044" : isProjectRibbons ? "0.052" : "0.055";
-  const flowScale = isContact ? "0.052" : isProjectRibbons ? "0.058" : "0.043";
-  const fineScale = isContact ? "0.012" : isProjectRibbons ? "0.017" : "0.009";
-  const driftScale = isContact ? "0.95" : isProjectRibbons ? "0.82" : "0.72";
-  const settleRate = isContact ? "0.019" : isProjectRibbons ? "0.023" : "0.026";
-  const scaleNoise = isContact ? "0.066" : isProjectRibbons ? "0.078" : "0.055";
+  const isExperience = layout === "experience-stream";
+  const timeScale = isContact ? "0.044" : isExperience ? "0.047" : isProjectRibbons ? "0.052" : "0.055";
+  const flowScale = isContact ? "0.052" : isExperience ? "0.049" : isProjectRibbons ? "0.058" : "0.043";
+  const fineScale = isContact ? "0.012" : isExperience ? "0.014" : isProjectRibbons ? "0.017" : "0.009";
+  const driftScale = isContact ? "0.95" : isExperience ? "0.88" : isProjectRibbons ? "0.82" : "0.72";
+  const settleRate = isContact ? "0.019" : isExperience ? "0.021" : isProjectRibbons ? "0.023" : "0.026";
+  const scaleNoise = isContact ? "0.066" : isExperience ? "0.07" : isProjectRibbons ? "0.078" : "0.055";
   const layoutFlow = isContact
     ? `
   vec2 upperCurrent = refPos - vec2(-0.12, 0.34);
@@ -22,6 +23,17 @@ export const ambientSimulationFragmentShader = (
   float softColumn = sin(refPos.y * 9.0 + time * 1.2) * 0.015;
   float sideBreath = cos(refPos.x * 5.6 - time * 0.9) * 0.017;
   vec2 asymmetricLife = verticalCurlA * 0.048 + verticalCurlB * 0.042 + vec2(softColumn, sideBreath);
+`
+    : isExperience
+    ? `
+  vec2 timelinePull = refPos - vec2(-0.08, 0.02);
+  vec2 upperArc = refPos - vec2(-0.38, 0.32);
+  vec2 lowerArc = refPos - vec2(0.34, -0.28);
+  vec2 arcA = vec2(-upperArc.y * 0.44, upperArc.x) * exp(-dot(upperArc, upperArc) * 2.4);
+  vec2 arcB = vec2(lowerArc.y * 0.36, -lowerArc.x) * exp(-dot(lowerArc, lowerArc) * 2.2);
+  float careerWave = sin((refPos.x * 4.4 + refPos.y * 7.2) + time * 1.15) * 0.016;
+  float verticalBreath = cos(timelinePull.y * 5.8 - time * 0.82) * 0.015;
+  vec2 asymmetricLife = arcA * 0.046 + arcB * 0.04 + vec2(careerWave, verticalBreath);
 `
     : isProjectRibbons
     ? `

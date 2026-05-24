@@ -22,7 +22,7 @@ export class AntigravityScene {
   readonly particlesScale: number;
   readonly density: number;
   readonly mode: "hero" | "ambient";
-  readonly ambientLayout: "field" | "project-ribbons" | "project-tall-ribbons" | "contact-field";
+  readonly ambientLayout: "field" | "project-ribbons" | "project-tall-ribbons" | "contact-field" | "experience-stream";
   readonly alpha: number;
   readonly colorFloor: number;
   readonly floatTextureType: THREE.TextureDataType;

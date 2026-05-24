@@ -3,7 +3,7 @@ import { AntigravityScene } from "../lib/antigravity/AntigravityScene";
 
 interface AmbientParticleBackgroundProps {
   className?: string;
-  variant?: "about" | "projects" | "projectsTall" | "contact";
+  variant?: "about" | "projects" | "projectsTall" | "experience" | "contact";
 }
 
 function AmbientParticleBackground({ className, variant = "about" }: AmbientParticleBackgroundProps) {
@@ -21,18 +21,26 @@ function AmbientParticleBackground({ className, variant = "about" }: AmbientPart
       ambientLayout:
         variant === "contact"
           ? "contact-field"
+          : variant === "experience"
+          ? "experience-stream"
           : variant === "projectsTall"
           ? "project-tall-ribbons"
           : variant === "projects"
             ? "project-ribbons"
             : "field",
       interactive: false,
-      density: variant === "contact" ? 190 : variant === "projectsTall" ? 275 : variant === "projects" ? 195 : 165,
-      particlesScale: variant === "contact" ? 1.32 : variant === "projectsTall" ? 1.42 : variant === "projects" ? 1.24 : 0.87,
-      alpha: variant === "contact" ? 1.28 : variant === "projectsTall" ? 1.42 : variant === "projects" ? 1.26 : 1.3,
-      colorFloor: variant === "contact" ? 0.44 : variant === "projectsTall" ? 0.34 : variant === "projects" ? 0.3 : 0,
+      density: variant === "contact" ? 190 : variant === "experience" ? 265 : variant === "projectsTall" ? 275 : variant === "projects" ? 195 : 165,
+      particlesScale: variant === "contact" ? 1.32 : variant === "experience" ? 1.21 : variant === "projectsTall" ? 1.42 : variant === "projects" ? 1.24 : 0.87,
+      alpha: variant === "contact" ? 1.28 : variant === "experience" ? 1.84 : variant === "projectsTall" ? 1.42 : variant === "projects" ? 1.26 : 1.3,
+      colorFloor: variant === "contact" ? 0.44 : variant === "experience" ? 0.88 : variant === "projectsTall" ? 0.34 : variant === "projects" ? 0.3 : 0,
       colors:
-        variant === "projects" || variant === "projectsTall" || variant === "contact"
+        variant === "experience"
+          ? {
+              color1: "#9b1230",
+              color2: "#ef3c2d",
+              color3: "#ffb21c"
+            }
+          : variant === "projects" || variant === "projectsTall" || variant === "contact"
           ? {
               color1: "#2a0d16",
               color2: "#bd162c",

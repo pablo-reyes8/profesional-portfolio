@@ -86,11 +86,17 @@ export class MainParticles {
           this.scene.ambientLayout === "project-tall-ribbons";
         const isTallProjectLayout = this.scene.ambientLayout === "project-tall-ribbons";
         const isContactLayout = this.scene.ambientLayout === "contact-field";
+        const isExperienceLayout = this.scene.ambientLayout === "experience-stream";
         const contactCurve =
           Math.sin(rawY * 8.2 + rawX * 1.4) * 0.07 +
           Math.cos(rawY * 3.1 - rawX * 5.2) * 0.035;
+        const experienceCurve =
+          Math.sin(rawY * 5.5 + rawX * 3.2) * 0.06 +
+          Math.cos((rawX + rawY) * 4.8) * 0.03;
         const nx = isContactLayout
           ? (rawX - 0.5) * 0.96 + contactCurve
+          : isExperienceLayout
+          ? (rawX - 0.5) * 1.18 + experienceCurve
           : (rawX - 0.5) * (isProjectLayout ? 1.36 : 1.15);
         const ribbon =
           Math.sin(rawX * 7.0 + rawY * 2.4) * 0.075 +
@@ -98,6 +104,8 @@ export class MainParticles {
         const ny =
           isContactLayout
             ? (rawY - 0.5) * 0.86 + Math.sin(rawX * 6.0) * 0.035
+            : isExperienceLayout
+            ? (rawY - 0.5) * 0.98 + Math.sin(rawX * 9.0 + rawY * 1.8) * 0.055
             : isProjectLayout
             ? (rawY - 0.5) * (isTallProjectLayout ? 1.18 : 0.66) + ribbon
             : (rawY - 0.5) * 0.72;

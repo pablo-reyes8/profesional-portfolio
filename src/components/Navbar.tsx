@@ -8,6 +8,7 @@ function Navbar() {
       <nav className="navbar-links" aria-label="Main navigation">
         <a href="#about">About Me</a>
         <a href="#projects">Projects</a>
+        <a href="#experience">Experience</a>
         <a href="#contact">Contact</a>
         <a href="/cv/Hoja_de_Vida_Industria.pdf" target="_blank" rel="noreferrer">
           CV

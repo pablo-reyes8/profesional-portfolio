@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import About from "./components/About";
 import Contact from "./components/Contact";
+import Experience from "./components/Experience";
 import Hero from "./components/Hero";
 import Navbar from "./components/Navbar";
 import Projects from "./components/Projects";
@@ -24,8 +25,23 @@ function App() {
       }
 
       event.preventDefault();
+      const navbarHeight = Number.parseFloat(
+        getComputedStyle(document.documentElement).getPropertyValue("--navbar-height")
+      ) || 64;
+      const sectionContent = target.querySelector<HTMLElement>(
+        ".about-container, .projects-container, .experience-container, .contact-container"
+      );
+      const scrollTarget = sectionContent || target;
+      const targetTop =
+        hash === "#top"
+          ? 0
+          : scrollTarget.getBoundingClientRect().top + window.scrollY - navbarHeight - 28;
+
       document.body.classList.add("is-section-scrolling");
-      target.scrollIntoView({ behavior: "smooth", block: "start" });
+      window.scrollTo({
+        top: Math.max(0, targetTop),
+        behavior: "smooth"
+      });
       window.history.pushState(null, "", hash);
       window.setTimeout(() => {
         document.body.classList.remove("is-section-scrolling");
@@ -43,6 +59,7 @@ function App() {
         <Hero />
         <About />
         <Projects />
+        <Experience />
         <Contact />
       </main>
     </>
