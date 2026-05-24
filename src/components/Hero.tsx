@@ -1,6 +1,9 @@
 import AntigravityParticleField from "./AntigravityParticleField";
+import { useLanguage } from "../i18n";
 
 function Hero() {
+  const { t } = useLanguage();
+
   return (
     <section className="hero" id="top">
       <AntigravityParticleField
@@ -14,21 +17,20 @@ function Hero() {
       <div className="hero-content">
         <p className="hero-eyebrow">
           <span className="hero-name">Pablo Reyes</span>
-          <span className="hero-role">Economist & Data Scientist</span>
+          <span className="hero-role">{t("Economist & Data Scientist")}</span>
         </p>
         <h1 className="hero-title">
-          Learning from data to understand complex systems.
+          {t("Learning from data to understand complex systems.")}
         </h1>
         <p className="hero-subtitle">
-          Explore my work across machine learning, data science, computer
-          vision, and applied economic research.
+          {t("Explore my work across machine learning, data science, computer vision, and applied economic research.")}
         </p>
-        <div className="hero-actions" aria-label="Portfolio actions">
+        <div className="hero-actions" aria-label={t("Portfolio actions")}>
           <a className="hero-button primary" href="#projects">
-            View Projects
+            {t("View Projects")}
           </a>
           <a className="hero-button secondary" href="#contact">
-            Contact
+            {t("Contact")}
           </a>
         </div>
       </div>

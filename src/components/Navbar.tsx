@@ -1,22 +1,27 @@
+import { useLanguage } from "../i18n";
+
 function Navbar() {
+  const { language, t, toggleLanguage } = useLanguage();
+  const nextLanguage = language === "en" ? "ES" : "EN";
+
   return (
     <header className="navbar">
-      <a className="navbar-brand" href="#top" aria-label="Pablo Reyes home">
+      <a className="navbar-brand" href="#top" aria-label={t("Pablo Reyes home")}>
         Pablo Reyes
       </a>
 
-      <nav className="navbar-links" aria-label="Main navigation">
-        <a href="#about">About Me</a>
-        <a href="#projects">Projects</a>
-        <a href="#experience">Experience</a>
-        <a href="#formation">Formation</a>
-        <a href="#contact">Contact</a>
+      <nav className="navbar-links" aria-label={t("Main navigation")}>
+        <a href="#about">{t("About Me")}</a>
+        <a href="#projects">{t("Projects")}</a>
+        <a href="#experience">{t("Experience")}</a>
+        <a href="#formation">{t("Formation")}</a>
+        <a href="#contact">{t("Contact")}</a>
         <a href="/cv/Hoja_de_Vida_Industria.pdf" target="_blank" rel="noreferrer">
           CV
         </a>
       </nav>
 
-      <nav className="navbar-socials" aria-label="External links">
+      <nav className="navbar-socials" aria-label={t("External links")}>
         <a
           className="navbar-social-link"
           href="https://github.com/pablo-reyes8"
@@ -45,6 +50,14 @@ function Navbar() {
           </svg>
           <span>LinkedIn</span>
         </a>
+        <button
+          className="navbar-language-toggle"
+          type="button"
+          aria-label={language === "en" ? "Traducir a español" : "Switch to English"}
+          onClick={toggleLanguage}
+        >
+          {nextLanguage}
+        </button>
       </nav>
     </header>
   );

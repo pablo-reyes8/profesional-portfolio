@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import About from "./components/About";
 import Contact from "./components/Contact";
 import Experience from "./components/Experience";
@@ -6,56 +6,85 @@ import Formation from "./components/Formation";
 import Hero from "./components/Hero";
 import Navbar from "./components/Navbar";
 import Projects from "./components/Projects";
+import { LanguageProvider } from "./i18n";
 
 function App() {
+  const contentRef = useRef<HTMLElement>(null);
+
   useEffect(() => {
-    let smoothScrollTarget = window.scrollY;
-    let smoothScrollFrame = 0;
+    const content = contentRef.current;
+    const reduceMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const cleanups: Array<() => void> = [];
 
-    const isScrollableElement = (element: Element | null): boolean => {
-      let current = element;
-      while (current && current !== document.body) {
-        const style = window.getComputedStyle(current);
-        const canScroll = /(auto|scroll)/.test(style.overflowY) && current.scrollHeight > current.clientHeight;
-        if (canScroll) {
-          return true;
+    const clampScrollTarget = (target: number): number => {
+      const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+      return Math.max(0, Math.min(maxScroll, target));
+    };
+
+    const scrollToPageTarget = (targetTop: number): void => {
+      window.scrollTo({
+        top: clampScrollTarget(targetTop),
+        behavior: reduceMotionQuery.matches ? "auto" : "smooth"
+      });
+    };
+
+    const getContentScrollTop = (element: HTMLElement): number => {
+      if (!content) {
+        return element.getBoundingClientRect().top + window.scrollY;
+      }
+
+      return element.getBoundingClientRect().top - content.getBoundingClientRect().top;
+    };
+
+    if (!content || reduceMotionQuery.matches) {
+      document.body.style.removeProperty("height");
+      content?.style.removeProperty("transform");
+      content?.classList.remove("smooth-scroll-content");
+    } else {
+      let renderedScroll = window.scrollY;
+      let animationFrame = 0;
+
+      const setBodyHeight = (): void => {
+        document.body.style.height = `${content.scrollHeight}px`;
+      };
+
+      const renderSmoothScroll = (): void => {
+        const targetScroll = window.scrollY;
+        const distance = targetScroll - renderedScroll;
+
+        renderedScroll += distance * 0.095;
+
+        if (Math.abs(distance) < 0.08) {
+          renderedScroll = targetScroll;
         }
-        current = current.parentElement;
-      }
-      return false;
-    };
 
-    const animateSmoothScroll = (): void => {
-      const distance = smoothScrollTarget - window.scrollY;
-      if (Math.abs(distance) < 0.6) {
-        window.scrollTo(0, smoothScrollTarget);
-        smoothScrollFrame = 0;
-        return;
-      }
+        content.style.transform = `translate3d(0, ${-renderedScroll}px, 0)`;
+        animationFrame = window.requestAnimationFrame(renderSmoothScroll);
+      };
 
-      window.scrollTo(0, window.scrollY + distance * 0.085);
-      smoothScrollFrame = window.requestAnimationFrame(animateSmoothScroll);
-    };
+      content.classList.add("smooth-scroll-content");
+      setBodyHeight();
+      animationFrame = window.requestAnimationFrame(renderSmoothScroll);
 
-    const handleWheel = (event: WheelEvent): void => {
-      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      if (
-        prefersReducedMotion ||
-        event.ctrlKey ||
-        Math.abs(event.deltaX) > Math.abs(event.deltaY) ||
-        isScrollableElement(event.target as Element | null)
-      ) {
-        return;
-      }
+      const resizeObserver = new ResizeObserver(setBodyHeight);
+      resizeObserver.observe(content);
+      window.addEventListener("resize", setBodyHeight);
 
-      event.preventDefault();
-      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-      smoothScrollTarget = Math.max(0, Math.min(maxScroll, smoothScrollTarget + event.deltaY));
+      const handleMotionPreferenceChange = (): void => {
+        window.location.reload();
+      };
 
-      if (!smoothScrollFrame) {
-        smoothScrollFrame = window.requestAnimationFrame(animateSmoothScroll);
-      }
-    };
+      reduceMotionQuery.addEventListener("change", handleMotionPreferenceChange);
+      cleanups.push(() => {
+        window.cancelAnimationFrame(animationFrame);
+        resizeObserver.disconnect();
+        window.removeEventListener("resize", setBodyHeight);
+        reduceMotionQuery.removeEventListener("change", handleMotionPreferenceChange);
+        document.body.style.removeProperty("height");
+        content.style.removeProperty("transform");
+        content.classList.remove("smooth-scroll-content");
+      });
+    }
 
     const handleClick = (event: MouseEvent): void => {
       const link = (event.target as Element | null)?.closest<HTMLAnchorElement>("a[href^='#']");
@@ -84,35 +113,44 @@ function App() {
       const targetTop =
         hash === "#top"
           ? 0
-          : scrollTarget.getBoundingClientRect().top + window.scrollY - navbarHeight - 28;
-      smoothScrollTarget = Math.max(0, targetTop);
+          : getContentScrollTop(scrollTarget) - navbarHeight - 28;
 
       document.body.classList.add("is-section-scrolling");
-      window.scrollTo({
-        top: Math.max(0, targetTop),
-        behavior: "smooth"
-      });
+      scrollToPageTarget(targetTop);
       window.history.pushState(null, "", hash);
       window.setTimeout(() => {
         document.body.classList.remove("is-section-scrolling");
       }, 760);
     };
 
+    const handleSmoothScrollRequest = (event: Event): void => {
+      const { top } = (event as CustomEvent<{ top?: number }>).detail || {};
+
+      if (typeof top !== "number") {
+        return;
+      }
+
+      document.body.classList.add("is-section-scrolling");
+      scrollToPageTarget(top);
+      window.setTimeout(() => {
+        document.body.classList.remove("is-section-scrolling");
+      }, 760);
+    };
+
     document.addEventListener("click", handleClick);
-    window.addEventListener("wheel", handleWheel, { passive: false });
+    window.addEventListener("portfolio:smooth-scroll-to", handleSmoothScrollRequest);
+
     return () => {
       document.removeEventListener("click", handleClick);
-      window.removeEventListener("wheel", handleWheel);
-      if (smoothScrollFrame) {
-        window.cancelAnimationFrame(smoothScrollFrame);
-      }
+      window.removeEventListener("portfolio:smooth-scroll-to", handleSmoothScrollRequest);
+      cleanups.forEach((cleanup) => cleanup());
     };
   }, []);
 
   return (
-    <>
+    <LanguageProvider>
       <Navbar />
-      <main>
+      <main ref={contentRef}>
         <Hero />
         <About />
         <Projects />
@@ -120,7 +158,7 @@ function App() {
         <Formation />
         <Contact />
       </main>
-    </>
+    </LanguageProvider>
   );
 }
 

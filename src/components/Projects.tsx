@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState, type CSSProperties, type MouseEvent } from "react";
 import AmbientParticleBackground from "./AmbientParticleBackground";
+import { useLanguage } from "../i18n";
 
 type ProjectCategory =
   | "Feature"
@@ -364,13 +365,15 @@ const projectResults: Record<string, ProjectResultBundle> = {
 };
 
 function ProjectResultsPanel({ bundle }: { bundle: ProjectResultBundle }) {
+  const { t } = useLanguage();
+
   return (
     <div className={`project-results-panel is-${bundle.layout}`}>
       <div className="project-results-panel-header">
-        <p className="project-results-panel-eyebrow">Results</p>
+        <p className="project-results-panel-eyebrow">{t("Results")}</p>
         <div>
-          <h4>{bundle.title}</h4>
-          <p>{bundle.description}</p>
+          <h4>{t(bundle.title)}</h4>
+          <p>{t(bundle.description)}</p>
         </div>
       </div>
 
@@ -378,8 +381,8 @@ function ProjectResultsPanel({ bundle }: { bundle: ProjectResultBundle }) {
         <div className="project-results-media">
           {bundle.images.map((image) => (
             <figure className={`project-result-figure is-${image.size}`} key={image.src}>
-              <img src={image.src} alt={image.caption} loading="lazy" />
-              <figcaption>{image.caption}</figcaption>
+              <img src={image.src} alt={t(image.caption)} loading="lazy" />
+              <figcaption>{t(image.caption)}</figcaption>
             </figure>
           ))}
         </div>
@@ -389,12 +392,12 @@ function ProjectResultsPanel({ bundle }: { bundle: ProjectResultBundle }) {
         <div className="project-result-tables">
           {bundle.tables.map((table) => (
             <div className="project-result-table-wrap" key={table.title}>
-              <p className="project-result-table-title">{table.title}</p>
+              <p className="project-result-table-title">{t(table.title)}</p>
               <table className="project-result-table">
                 <thead>
                   <tr>
                     {table.columns.map((column) => (
-                      <th key={column}>{column}</th>
+                      <th key={column}>{t(column)}</th>
                     ))}
                   </tr>
                 </thead>
@@ -402,7 +405,7 @@ function ProjectResultsPanel({ bundle }: { bundle: ProjectResultBundle }) {
                   {table.rows.map((row) => (
                     <tr key={row.join("-")}>
                       {row.map((cell) => (
-                        <td key={cell}>{cell}</td>
+                        <td key={cell}>{t(cell)}</td>
                       ))}
                     </tr>
                   ))}
@@ -732,6 +735,7 @@ const projects: ProjectItem[] = [
 ];
 
 function Projects() {
+  const { t } = useLanguage();
   const [activeCategory, setActiveCategory] = useState<ProjectCategory>("Feature");
   const [expandedId, setExpandedId] = useState<string>("");
   const [openResultsId, setOpenResultsId] = useState<string>("");
@@ -841,12 +845,12 @@ function Projects() {
         variant={usesTallProjectBackground || hasOpenResults ? "projectsTall" : "projects"}
       />
       <div className="projects-container">
-        <p className="section-eyebrow">Projects</p>
+        <p className="section-eyebrow">{t("Projects")}</p>
         <div className="projects-heading-row">
-          <h2 className="projects-title">Selected research systems, shipped as working code.</h2>
+          <h2 className="projects-title">{t("Selected research systems, shipped as working code.")}</h2>
         </div>
 
-        <div className="project-tabs" aria-label="Project categories">
+        <div className="project-tabs" aria-label={t("Project categories")}>
           {categories.map((category) => (
             <button
               className={`project-tab ${category === activeCategory ? "is-active" : ""}`}
@@ -855,7 +859,7 @@ function Projects() {
               onClick={() => handleCategoryChange(category)}
             >
               {category === "Feature" ? <span className="project-tab-star">★</span> : null}
-              {category}
+              {t(category)}
             </button>
           ))}
         </div>
@@ -882,26 +886,23 @@ function Projects() {
                 }}
               >
                 <div className="project-card-topline">
-                  <span>{project.category}</span>
-                  <span>{isExpanded ? "Expanded" : "Open project"}</span>
+                  <span>{t(project.category)}</span>
+                  <span>{isExpanded ? t("Expanded") : t("Open project")}</span>
                 </div>
-                <h3>{project.title}</h3>
-                <p className="project-summary">{project.summary}</p>
+                <h3>{t(project.title)}</h3>
+                <p className="project-summary">{t(project.summary)}</p>
                 {isExpanded ? (
                   <div className="project-expanded-content">
                     <div className="project-expanded-copy">
-                      <p>{project.detail}</p>
+                      <p>{t(project.detail)}</p>
                       <p>
-                        The portfolio focus here is the full research-to-code surface:
-                        modeling decisions, reproducible workflows, evaluation artifacts,
-                        and enough engineering structure for the system to be inspected,
-                        extended, and rerun.
+                        {t("The portfolio focus here is the full research-to-code surface: modeling decisions, reproducible workflows, evaluation artifacts, and enough engineering structure for the system to be inspected, extended, and rerun.")}
                       </p>
                     </div>
                     <div className="project-results">
-                      <p className="project-results-title">Signals</p>
+                      <p className="project-results-title">{t("Signals")}</p>
                       {project.results.map((result) => (
-                        <span key={result}>{result}</span>
+                        <span key={result}>{t(result)}</span>
                       ))}
                     </div>
                   </div>
@@ -935,7 +936,7 @@ function Projects() {
                         closeExpandedProject();
                       }}
                     >
-                      Back
+                      {t("Back")}
                     </button>
                   ) : null}
                   <a
@@ -946,7 +947,7 @@ function Projects() {
                     onClick={(event) => event.stopPropagation()}
                   >
                     <GitHubIcon />
-                    GitHub Code
+                    {t("GitHub Code")}
                   </a>
                   {isExpanded && resultBundle ? (
                     <button
@@ -958,7 +959,7 @@ function Projects() {
                       }}
                     >
                       <ResultsIcon />
-                      {isResultsOpen ? "Hide Results" : "Show Results"}
+                      {isResultsOpen ? t("Hide Results") : t("Show Results")}
                     </button>
                   ) : null}
                 </div>
@@ -969,7 +970,7 @@ function Projects() {
             );
           })}
         </div>
-        <p className="project-grid-hint">Click to see full details</p>
+        <p className="project-grid-hint">{t("Click to see full details")}</p>
       </div>
     </section>
   );

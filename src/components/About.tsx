@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import AmbientParticleBackground from "./AmbientParticleBackground";
+import { useLanguage } from "../i18n";
 
 const skills = [
   { name: "Python", icon: "python" },
@@ -26,36 +27,37 @@ const skills = [
 ];
 
 function About() {
+  const { t } = useLanguage();
+
   return (
     <section id="about" className="about-section">
       <AmbientParticleBackground className="section-particles" />
       <div className="about-container">
-        <p className="section-eyebrow">About Me</p>
+        <p className="section-eyebrow">{t("About Me")}</p>
 
         <div className="about-grid">
           <div className="about-copy">
 
             <p>
-              I am <strong>Pablo Reyes</strong>, an economist and data scientist focused
-              on <strong>computer vision</strong>, <strong>causal inference</strong>,{" "}
-              <strong>Bayesian methods</strong>, and applied machine learning. I
-              currently work at the Central Bank of Colombia as a researcher in the team
-              of Board Member Mauricio Villamizar, developing empirical research on
-              financial data, market behavior, and economic policy questions.
+              {t("I am ")}<strong>Pablo Reyes</strong>{t(", an economist and data scientist focused")}
+              {" "}{t("on ")}<strong>{t("computer vision")}</strong>,{" "}
+              <strong>{t("causal inference")}</strong>, <strong>{t("Bayesian methods")}</strong>
+              {t(", and applied machine learning. I")} {t("currently work at the Central Bank of Colombia as a researcher in the team")}{" "}
+              {t("of Board Member Mauricio Villamizar, developing empirical research on")}{" "}
+              {t("financial data, market behavior, and economic policy questions.")}
             </p>
 
             <p>
-              My work combines <strong>deep learning</strong> and rigorous empirical
-              methods to study real-world mechanisms. I am especially interested in{" "}
-              <strong>representation learning</strong>, generative computer vision,
-              reproducible research pipelines, and models that are not only predictive,
-              but also interpretable and useful for understanding economic and social
-              dynamics.
+              {t("My work combines ")}<strong>{t("deep learning")}</strong>
+              {t(" and rigorous empirical")} {t("methods to study real-world mechanisms. I am especially interested in")}{" "}
+              <strong>{t("representation learning")}</strong>{t(", generative computer vision,")}{" "}
+              {t("reproducible research pipelines, and models that are not only predictive,")}{" "}
+              {t("but also interpretable and useful for understanding economic and social")} {t("dynamics.")}
             </p>
           </div>
 
-          <div className="stack-panel" aria-label="Technical stack">
-            <p className="stack-title">Stack</p>
+          <div className="stack-panel" aria-label={t("Technical stack")}>
+            <p className="stack-title">{t("Stack")}</p>
             <div className="stack-cloud">
               {skills.map((skill, index) => (
                 <span

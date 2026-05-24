@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import AmbientParticleBackground from "./AmbientParticleBackground";
+import { useLanguage } from "../i18n";
 
 const encodedRecipient = [
   108, 120, 114, 120, 126, 130, 118, 132, 113, 128, 64, 65, 73, 81, 114, 121, 110, 119, 123, 62,
@@ -21,6 +22,7 @@ function getContactTarget(): string {
 }
 
 function Contact() {
+  const { t } = useLanguage();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
@@ -28,7 +30,7 @@ function Contact() {
   const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
 
-    const subject = encodeURIComponent(`Portfolio contact from ${name || "Visitor"}`);
+    const subject = encodeURIComponent(`${t("Portfolio contact from")} ${name || t("Visitor")}`);
     const body = encodeURIComponent(
       [
         `Name: ${name}`,
@@ -45,23 +47,21 @@ function Contact() {
     <section id="contact" className="contact-section">
       <AmbientParticleBackground className="contact-particles" variant="contact" />
       <div className="contact-container">
-        <p className="section-eyebrow contact-eyebrow">Contact</p>
+        <p className="section-eyebrow contact-eyebrow">{t("Contact")}</p>
 
         <div className="contact-grid">
           <div className="contact-copy">
             <h2>
-              Interested in a data-driven solution for a complex research or
-              quantitative problem?
+              {t("Interested in a data-driven solution for a complex research or quantitative problem?")}
             </h2>
             <p>
-              Send me a short note about the question, system, or research workflow
-              you have in mind.
+              {t("Send me a short note about the question, system, or research workflow you have in mind.")}
             </p>
           </div>
 
           <form className="contact-form" onSubmit={handleSubmit}>
             <label>
-              <span>Name</span>
+              <span>{t("Name")}</span>
               <input
                 name="name"
                 type="text"
@@ -73,7 +73,7 @@ function Contact() {
             </label>
 
             <label>
-              <span>Email</span>
+              <span>{t("Email")}</span>
               <input
                 name="email"
                 type="email"
@@ -85,7 +85,7 @@ function Contact() {
             </label>
 
             <label>
-              <span>Message</span>
+              <span>{t("Message")}</span>
               <textarea
                 name="message"
                 value={message}
@@ -95,7 +95,7 @@ function Contact() {
               />
             </label>
 
-            <button type="submit">Send Message</button>
+            <button type="submit">{t("Send Message")}</button>
           </form>
         </div>
       </div>

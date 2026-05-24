@@ -1,5 +1,6 @@
 import { useState } from "react";
 import AmbientParticleBackground from "./AmbientParticleBackground";
+import { useLanguage } from "../i18n";
 
 interface EducationItem {
   institution: string;
@@ -159,6 +160,7 @@ const certificateGroups: CertificateGroup[] = [
 ];
 
 function Formation() {
+  const { t } = useLanguage();
   const [showCertifications, setShowCertifications] = useState(false);
   const [openGroup, setOpenGroup] = useState("Deep Learning Specialization");
   const [expandedEducation, setExpandedEducation] = useState("");
@@ -168,17 +170,16 @@ function Formation() {
       <AmbientParticleBackground className="formation-particles" variant="formation" />
 
       <div className="formation-container">
-        <p className="section-eyebrow">Formation</p>
+        <p className="section-eyebrow">{t("Formation")}</p>
 
         <div className="formation-header">
-          <h2>Academic training in economics, statistics, and machine learning.</h2>
+          <h2>{t("Academic training in economics, statistics, and machine learning.")}</h2>
           <p>
-            A compact view of my formal education, with certifications available on demand
-            so the section stays readable.
+            {t("A compact view of my formal education,  built around economic analysis, statistical modeling, and machine learning.")}
           </p>
         </div>
 
-        <div className="formation-list" aria-label="Academic formation">
+        <div className="formation-list" aria-label={t("Academic formation")}>
           {education.map((item) => {
             const id = item.program.toLowerCase().replaceAll(" ", "-");
             const isExpanded = expandedEducation === id;
@@ -207,31 +208,31 @@ function Formation() {
 
               <div className="formation-card-main">
                 <div className="formation-meta">
-                  <span>{item.period}</span>
-                  <span>{item.institution}</span>
+                  <span>{t(item.period)}</span>
+                  <span>{t(item.institution)}</span>
                 </div>
-                <h3>{item.program}</h3>
-                <p>{item.summary}</p>
+                <h3>{t(item.program)}</h3>
+                <p>{t(item.summary)}</p>
                 <div className="formation-details" aria-hidden={!isExpanded}>
                   <ul>
                     {item.details.map((detail) => (
-                      <li key={detail}>{detail}</li>
+                      <li key={detail}>{t(detail)}</li>
                     ))}
                   </ul>
                 </div>
               </div>
 
-              <div className="formation-focus" aria-label="Focus areas">
+              <div className="formation-focus" aria-label={t("Focus areas")}>
                 {visibleFocus.map((focus) => (
                   <span key={focus}>
                     <i aria-hidden="true" />
-                    {focus}
+                    {t(focus)}
                   </span>
                 ))}
               </div>
 
               {secondaryCredentials.length > 0 && isExpanded ? (
-                <div className="formation-extra-credentials" aria-label="Additional certificates">
+                <div className="formation-extra-credentials" aria-label={t("Additional certificates")}>
                   {secondaryCredentials.map((credential) => (
                     <a
                       key={credential.href}
@@ -240,7 +241,7 @@ function Formation() {
                       rel="noreferrer"
                       onClick={(event) => event.stopPropagation()}
                     >
-                      {credential.label}
+                      {t(credential.label)}
                     </a>
                   ))}
                 </div>
@@ -255,8 +256,8 @@ function Formation() {
                     rel="noreferrer"
                     onClick={(event) => event.stopPropagation()}
                   >
-                    <span>{primaryCredential.label}</span>
-                    <strong>Show Certification</strong>
+                    <span>{t(primaryCredential.label)}</span>
+                    <strong>{t("Show Certification")}</strong>
                   </a>
                 </div>
               ) : null}
@@ -272,7 +273,7 @@ function Formation() {
             aria-expanded={showCertifications}
             onClick={() => setShowCertifications((current) => !current)}
           >
-            {showCertifications ? "Hide additional formation" : "Show additional formation"}
+            {showCertifications ? t("Hide additional formation") : t("Show additional formation")}
           </button>
 
           {showCertifications ? (
@@ -288,17 +289,17 @@ function Formation() {
                       aria-expanded={isOpen}
                       onClick={() => setOpenGroup(isOpen ? "" : group.title)}
                     >
-                      <span>{group.provider}</span>
-                      <strong>{group.title}</strong>
+                      <span>{t(group.provider)}</span>
+                      <strong>{t(group.title)}</strong>
                     </button>
 
                     <div className="certification-card-body" aria-hidden={!isOpen}>
-                      <p>{group.summary}</p>
+                      <p>{t(group.summary)}</p>
                       <div className="certificate-links">
                         {group.links.map((link) => (
                           <a key={link.href} href={link.href} target="_blank" rel="noreferrer">
-                            <span>{link.label}</span>
-                            <strong>Show Certification</strong>
+                            <span>{t(link.label)}</span>
+                            <strong>{t("Show Certification")}</strong>
                           </a>
                         ))}
                       </div>
