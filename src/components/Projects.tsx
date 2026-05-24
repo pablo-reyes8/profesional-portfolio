@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, type CSSProperties, type MouseEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type MouseEvent } from "react";
 import AmbientParticleBackground from "./AmbientParticleBackground";
 import { useLanguage } from "../i18n";
 
@@ -740,7 +740,18 @@ function Projects() {
   const [expandedId, setExpandedId] = useState<string>("");
   const [openResultsId, setOpenResultsId] = useState<string>("");
   const [closingId, setClosingId] = useState<string>("");
+  const [isMobileProjects, setIsMobileProjects] = useState(false);
   const closeTimeoutRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const mobileQuery = window.matchMedia("(max-width: 760px)");
+    const updateMobileState = (): void => setIsMobileProjects(mobileQuery.matches);
+
+    updateMobileState();
+    mobileQuery.addEventListener("change", updateMobileState);
+
+    return () => mobileQuery.removeEventListener("change", updateMobileState);
+  }, []);
 
   const visibleProjects = useMemo(
     () => projects.filter((project) => project.category === activeCategory),
@@ -748,7 +759,7 @@ function Projects() {
   );
 
   const orderedProjects = useMemo(() => {
-    if (!expandedId) {
+    if (!expandedId || isMobileProjects) {
       return visibleProjects;
     }
 
@@ -768,7 +779,7 @@ function Projects() {
       expandedProject,
       ...remainingProjects.slice(insertionIndex)
     ];
-  }, [expandedId, visibleProjects]);
+  }, [expandedId, isMobileProjects, visibleProjects]);
 
   const handleCategoryChange = (category: ProjectCategory): void => {
     if (closeTimeoutRef.current !== null) {
@@ -782,6 +793,11 @@ function Projects() {
   };
 
   const handleProjectOpen = (projectId: string): void => {
+    if (expandedId === projectId) {
+      closeExpandedProject();
+      return;
+    }
+
     if (closeTimeoutRef.current !== null) {
       window.clearTimeout(closeTimeoutRef.current);
       closeTimeoutRef.current = null;

@@ -3,7 +3,7 @@ import { AntigravityScene } from "../lib/antigravity/AntigravityScene";
 
 interface AmbientParticleBackgroundProps {
   className?: string;
-  variant?: "about" | "projects" | "projectsTall" | "experience" | "formation" | "contact";
+  variant?: "about" | "projects" | "projectsTall" | "experience" | "experienceLight" | "formation" | "contact";
 }
 
 function AmbientParticleBackground({ className, variant = "about" }: AmbientParticleBackgroundProps) {
@@ -23,7 +23,7 @@ function AmbientParticleBackground({ className, variant = "about" }: AmbientPart
           ? "contact-field"
           : variant === "formation"
           ? "formation-bands"
-          : variant === "experience"
+          : variant === "experience" || variant === "experienceLight"
           ? "experience-stream"
           : variant === "projectsTall"
           ? "project-tall-ribbons"
@@ -31,10 +31,11 @@ function AmbientParticleBackground({ className, variant = "about" }: AmbientPart
             ? "project-ribbons"
             : "field",
       interactive: false,
-      density: variant === "contact" ? 190 : variant === "formation" ? 205 : variant === "experience" ? 265 : variant === "projectsTall" ? 275 : variant === "projects" ? 195 : 165,
-      particlesScale: variant === "contact" ? 1.32 : variant === "formation" ? 0.9 : variant === "experience" ? 0.9 : variant === "projectsTall" ? 1.31 : variant === "projects" ? 1.24 : 0.87,
-      alpha: variant === "contact" ? 1.28 : variant === "formation" ? 1.5 : variant === "experience" ? 1.84 : variant === "projectsTall" ? 1.42 : variant === "projects" ? 1.26 : 1.3,
-      colorFloor: variant === "contact" ? 0.44 : variant === "formation" ? 0.42 : variant === "experience" ? 0.88 : variant === "projectsTall" ? 0.34 : variant === "projects" ? 0.3 : 0,
+      density: variant === "contact" ? 190 : variant === "formation" ? 205 : variant === "experience" ? 265 : variant === "experienceLight" ? 215 : variant === "projectsTall" ? 275 : variant === "projects" ? 195 : 165,
+      particlesScale: variant === "contact" ? 1.32 : variant === "formation" ? 0.9 : variant === "experience" ? 0.9 : variant === "experienceLight" ? 0.84 : variant === "projectsTall" ? 1.31 : variant === "projects" ? 1.24 : 0.87,
+      alpha: variant === "contact" ? 1.28 : variant === "formation" ? 1.5 : variant === "experience" ? 1.84 : variant === "experienceLight" ? 1.66 : variant === "projectsTall" ? 1.42 : variant === "projects" ? 1.26 : 1.3,
+      colorFloor: variant === "contact" ? 0.44 : variant === "formation" ? 0.42 : variant === "experience" ? 0.88 : variant === "experienceLight" ? 0.82 : variant === "projectsTall" ? 0.34 : variant === "projects" ? 0.3 : 0,
+      pixelRatio: variant === "experienceLight" ? 1.5 : undefined,
       colors:
         variant === "formation"
           ? {
@@ -42,7 +43,7 @@ function AmbientParticleBackground({ className, variant = "about" }: AmbientPart
               color2: "#bd162c",
               color3: "#ffb21c"
             }
-          : variant === "experience"
+          : variant === "experience" || variant === "experienceLight"
           ? {
               color1: "#9b1230",
               color2: "#ef3c2d",
