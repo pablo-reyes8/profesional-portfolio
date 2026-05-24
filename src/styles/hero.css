@@ -1400,10 +1400,10 @@
 }
 
 .experience-logo.is-cropped img {
-  width: 118%;
-  height: 118%;
+  width: 128%;
+  height: 128%;
   object-fit: cover;
-  object-position: center 66%;
+  object-position: center 72%;
 }
 
 .experience-logo.is-red {

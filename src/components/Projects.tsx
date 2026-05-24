@@ -468,7 +468,7 @@ const projects: ProjectItem[] = [
   {
     id: "outgrid",
     category: "Advanced Deep Learning",
-    title: "OutGridViT Architecture Lab",
+    title: "OutGridViT Architecture",
     source: "outgrid.md",
     github: "https://github.com/pablo-reyes8/outlook-grid-vision-transformer",
     summary: "A hybrid vision transformer combining dynamic local aggregation, MBConv inductive bias, and grid attention.",
