@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { Analytics } from "@vercel/analytics/react";
 import About from "./components/About";
 import Contact from "./components/Contact";
 import Experience from "./components/Experience";
@@ -140,6 +141,7 @@ function App() {
         <Formation />
         <Contact />
       </main>
+      <Analytics />
     </LanguageProvider>
   );
 }
