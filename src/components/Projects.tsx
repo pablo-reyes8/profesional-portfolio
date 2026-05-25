@@ -713,7 +713,7 @@ const projects: ProjectItem[] = [
     category: "MLOps",
     title: "ResNet Interpretability Service",
     source: "cnn-mlops-interpretability.md",
-    github: "https://github.com/SPMINE-2425/proyecto-final-reyes-castano",
+    github: "https://github.com/pablo-reyes8/cnn-interpretability-mlops",
     summary: "A full-stack ResNet-101 cat-vs-dog classifier with explainability tools and reproducible configuration.",
     detail:
       "Ships an API and app for binary image classification with occlusion sensitivity, Integrated Gradients, Grad-CAM, feature maps, kernel visualization, modular YAML configs, and evaluation utilities.",
