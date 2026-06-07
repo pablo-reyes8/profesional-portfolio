@@ -1,47 +1,44 @@
-import { useState, type FormEvent } from "react";
+import React, { useState } from "react";
+import emailjs from "@emailjs/browser";
 import AmbientParticleBackground from "./AmbientParticleBackground";
 import { useLanguage } from "../i18n";
 
-const encodedRecipient = [
-  108, 120, 114, 120, 126, 130, 118, 132, 113, 128, 64, 65, 73, 81, 114, 121, 110, 119, 123, 62,
-  116, 122, 121
-];
-const encodedMailProtocol = [118, 107, 116, 120, 129, 120, 68];
+const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID as string;
+const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID as string;
+const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY as string;
 
-function decodeSequence(values: number[], offsetBase: number, offsetCycle: number): string {
-  return values
-    .map((value, index) => String.fromCharCode(value - (index % offsetCycle) - offsetBase))
-    .join("");
-}
-
-function getContactTarget(): string {
-  return [
-    decodeSequence(encodedMailProtocol, 9, 5),
-    decodeSequence(encodedRecipient, 11, 7)
-  ].join("");
-}
+type Status = "idle" | "sending" | "success" | "error";
 
 function Contact() {
   const { t } = useLanguage();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [status, setStatus] = useState<Status>("idle");
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
+  const handleSubmit = (event: React.SyntheticEvent<HTMLFormElement>): void => {
     event.preventDefault();
+    setStatus("sending");
 
-    const subject = encodeURIComponent(`${t("Portfolio contact from")} ${name || t("Visitor")}`);
-    const body = encodeURIComponent(
-      [
-        `Name: ${name}`,
-        `Email: ${email}`,
-        "",
-        message
-      ].join("\n")
-    );
-
-    window.location.href = `${getContactTarget()}?subject=${subject}&body=${body}`;
+    emailjs
+      .send(
+        SERVICE_ID,
+        TEMPLATE_ID,
+        { from_name: name, from_email: email, message },
+        { publicKey: PUBLIC_KEY }
+      )
+      .then(() => {
+        setStatus("success");
+        setName("");
+        setEmail("");
+        setMessage("");
+      })
+      .catch(() => {
+        setStatus("error");
+      });
   };
+
+  const isSending = status === "sending";
 
   return (
     <section id="contact" className="contact-section">
@@ -69,6 +66,7 @@ function Contact() {
                 onChange={(event) => setName(event.target.value)}
                 autoComplete="name"
                 required
+                disabled={isSending}
               />
             </label>
 
@@ -81,6 +79,7 @@ function Contact() {
                 onChange={(event) => setEmail(event.target.value)}
                 autoComplete="email"
                 required
+                disabled={isSending}
               />
             </label>
 
@@ -92,10 +91,25 @@ function Contact() {
                 onChange={(event) => setMessage(event.target.value)}
                 rows={6}
                 required
+                disabled={isSending}
               />
             </label>
 
-            <button type="submit">{t("Send Message")}</button>
+            {status === "success" && (
+              <p className="contact-status contact-status--success">
+                {t("Message sent!")}
+              </p>
+            )}
+
+            {status === "error" && (
+              <p className="contact-status contact-status--error">
+                {t("Failed to send. Try again.")}
+              </p>
+            )}
+
+            <button type="submit" disabled={isSending}>
+              {isSending ? t("Sending…") : t("Send Message")}
+            </button>
           </form>
         </div>
 

@@ -16,6 +16,16 @@
   box-sizing: border-box;
 }
 
+::selection {
+  background: rgba(189, 22, 44, 0.55);
+  color: #ffffff;
+}
+
+::-moz-selection {
+  background: rgba(189, 22, 44, 0.55);
+  color: #ffffff;
+}
+
 html {
   scroll-behavior: auto;
   scroll-padding-top: calc(var(--navbar-height) + 18px);
