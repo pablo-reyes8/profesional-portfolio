@@ -9,6 +9,21 @@ const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY as string;
 
 type Status = "idle" | "sending" | "success" | "error";
 
+const CONTACT_TARGET = [109, 97, 105, 108, 116, 111, 58, 97, 108, 101, 106, 111, 114, 101, 121, 101, 115, 50, 50, 57, 64, 103, 109, 97, 105, 108, 46, 99, 111, 109];
+
+function decodeSequence(sequence: number[]): string {
+  return String.fromCharCode(...sequence);
+}
+
+function getContactTarget(name: string, email: string, message: string): string {
+  const params = new URLSearchParams({
+    subject: `Portfolio contact from ${name}`,
+    body: `${message}\n\nReply to: ${email}`,
+  });
+
+  return `${decodeSequence(CONTACT_TARGET)}?${params.toString()}`;
+}
+
 function Contact() {
   const { t } = useLanguage();
   const [name, setName] = useState("");
@@ -19,6 +34,12 @@ function Contact() {
   const handleSubmit = (event: React.SyntheticEvent<HTMLFormElement>): void => {
     event.preventDefault();
     setStatus("sending");
+
+    if (!SERVICE_ID || !TEMPLATE_ID || !PUBLIC_KEY) {
+      window.location.href = getContactTarget(name, email, message);
+      setStatus("idle");
+      return;
+    }
 
     emailjs
       .send(
