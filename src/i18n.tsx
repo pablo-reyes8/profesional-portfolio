@@ -257,6 +257,7 @@ const LanguageContext = createContext<LanguageContextValue | null>(null);
 Object.assign(translations, {
   Feature: "Destacados",
   "Advanced Deep Learning": "Deep Learning Avanzado",
+  "Architecture Design": "Diseño de Arquitecturas",
   MLOps: "MLOps",
   "Machine Learning Applications": "Apps de Machine Learning",
   Results: "Resultados",
@@ -603,7 +604,15 @@ Object.assign(translations, {
     "Implementa convolución 2D, ReLU, max pooling, flatten, softmax denso, backprop, Adam, tests y notebooks sin autograd.",
   "Hand-coded neural network components": "Componentes neuronales escritos a mano",
   "Unit-tested math": "Matemática con unit tests",
-  "Interactive learning notebooks": "Notebooks interactivos"
+  "Interactive learning notebooks": "Notebooks interactivos",
+  "DINO Self-Supervised ViT": "ViT autosupervisado DINO",
+  "A clean, modular PyTorch implementation of DINO self-supervised Vision Transformers with DINOv3-style Gram regularization and an inference server.":
+    "Implementación PyTorch limpia y modular de Vision Transformers autosupervisados DINO con regularización Gram estilo DINOv3 y servidor de inferencia.",
+  "Trains a ViT student to match an EMA teacher without labels: multi-crop augmentation, RoPE and register tokens, optional patch Gram-matrix loss, resumable mixed-precision training, DDP and experimental block sharding, a config-driven ablation harness, and a FastAPI inference server for features and segmentation.":
+    "Entrena un ViT estudiante para imitar a un teacher EMA sin etiquetas: aumentación multi-crop, RoPE y register tokens, pérdida Gram por parches opcional, entrenamiento mixed-precision reanudable, DDP y sharding experimental, arnés de ablación por config y servidor FastAPI para features y segmentación.",
+  "EMA teacher and multi-crop training": "Teacher EMA y entrenamiento multi-crop",
+  "DINOv3-style Gram-loss ablation harness": "Arnés de ablación de pérdida Gram estilo DINOv3",
+  "FastAPI feature and segmentation server": "Servidor FastAPI de features y segmentación"
 });
 
 export function LanguageProvider({ children }: { children: ReactNode }) {

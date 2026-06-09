@@ -5,6 +5,7 @@ import { useLanguage } from "../i18n";
 type ProjectCategory =
   | "Feature"
   | "Advanced Deep Learning"
+  | "Architecture Design"
   | "MLOps"
   | "Econometrics"
   | "Machine Learning Applications";
@@ -47,6 +48,7 @@ interface ProjectResultBundle {
 const categories: ProjectCategory[] = [
   "Feature",
   "Advanced Deep Learning",
+  "Architecture Design",
   "MLOps",
   "Econometrics",
   "Machine Learning Applications"
@@ -518,7 +520,7 @@ const projects: ProjectItem[] = [
   },
   {
     id: "vision-transformers",
-    category: "Advanced Deep Learning",
+    category: "Architecture Design",
     title: "Vision Transformer Comparison Arena",
     source: "ViTs.md",
     github: "https://github.com/pablo-reyes8/multiscale-vision-transformers",
@@ -638,7 +640,7 @@ const projects: ProjectItem[] = [
   },
   {
     id: "gpt-research-suite",
-    category: "Machine Learning Applications",
+    category: "Architecture Design",
     title: "GPT Research Suite",
     source: "gpt.md",
     github: "https://github.com/pablo-reyes8/implementing-gpt",
@@ -650,7 +652,7 @@ const projects: ProjectItem[] = [
   },
   {
     id: "yolov2",
-    category: "Machine Learning Applications",
+    category: "Architecture Design",
     title: "YOLOv2 Detection System",
     source: "yolov2.md",
     github: "https://github.com/pablo-reyes8/yolov2-implementation",
@@ -686,7 +688,7 @@ const projects: ProjectItem[] = [
   },
   {
     id: "gans",
-    category: "Advanced Deep Learning",
+    category: "Architecture Design",
     title: "GAN Objectives and Stabilization Lab",
     source: "gans-implementations.md",
     github: "https://github.com/pablo-reyes8/pytorch-gans",
@@ -698,7 +700,7 @@ const projects: ProjectItem[] = [
   },
   {
     id: "cnn-survey",
-    category: "Advanced Deep Learning",
+    category: "Architecture Design",
     title: "CNN Architecture Survey from Scratch",
     source: "cnn-architectures-survery.md",
     github: "https://github.com/pablo-reyes8/famous-cnns-from-scratch",
@@ -707,6 +709,18 @@ const projects: ProjectItem[] = [
       "Implements classic CNN families without torchvision wrappers, mapping architecture details to original papers across LeNet, AlexNet, VGG, Inception, ResNet, U-Net, MobileNet, and EfficientNet.",
     stack: ["Python", "PyTorch", "CNNs", "ResNet", "U-Net", "EfficientNet"],
     results: ["Self-contained architecture modules", "Training scripts and tests", "Historical architecture timeline"]
+  },
+  {
+    id: "dino",
+    category: "Architecture Design",
+    title: "DINO Self-Supervised ViT",
+    source: "dino.md",
+    github: "https://github.com/pablo-reyes8/tiny-dino-vit",
+    summary: "A clean, modular PyTorch implementation of DINO self-supervised Vision Transformers with DINOv3-style Gram regularization and an inference server.",
+    detail:
+      "Trains a ViT student to match an EMA teacher without labels: multi-crop augmentation, RoPE and register tokens, optional patch Gram-matrix loss, resumable mixed-precision training, DDP and experimental block sharding, a config-driven ablation harness, and a FastAPI inference server for features and segmentation.",
+    stack: ["Python", "PyTorch", "ViT", "DDP", "FastAPI", "Docker"],
+    results: ["EMA teacher and multi-crop training", "DINOv3-style Gram-loss ablation harness", "FastAPI feature and segmentation server"]
   },
   {
     id: "cat-dog-interpretability",
@@ -842,6 +856,7 @@ function Projects() {
 
   const usesTallProjectBackground =
     activeCategory === "Advanced Deep Learning" ||
+    activeCategory === "Architecture Design" ||
     activeCategory === "Econometrics" ||
     activeCategory === "Machine Learning Applications";
   const hasOpenResults = Boolean(openResultsId);
