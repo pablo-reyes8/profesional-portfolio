@@ -135,8 +135,29 @@ function Contact() {
               </p>
             )}
 
-            <button type="submit" disabled={isSending}>
-              {isSending ? t("Sending…") : t("Send Message")}
+            <button className="contact-submit" type="submit" disabled={isSending}>
+              <span className="contact-submit-text">
+                {isSending ? t("Sending…") : t("Send Message")}
+              </span>
+              {isSending ? (
+                <span className="contact-submit-spinner" aria-hidden="true" />
+              ) : (
+                <svg
+                  className="contact-submit-arrow"
+                  viewBox="0 0 24 24"
+                  width="16"
+                  height="16"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M5 12h14" />
+                  <path d="M13 6l6 6-6 6" />
+                </svg>
+              )}
             </button>
           </form>
         </div>
