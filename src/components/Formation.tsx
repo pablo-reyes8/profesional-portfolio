@@ -202,7 +202,7 @@ function Formation() {
 
             return (
             <article
-              className={`formation-card ${item.credentials.length > 0 ? "has-credentials" : ""} ${isExpanded ? "is-expanded" : ""}`}
+              className={`formation-card is-${item.tone} ${item.credentials.length > 0 ? "has-credentials" : ""} ${isExpanded ? "is-expanded" : ""}`}
               key={`${item.program}-${item.period}`}
               role="button"
               tabIndex={0}
@@ -274,6 +274,21 @@ function Formation() {
                   </a>
                 </div>
               ) : null}
+
+              <span className="formation-expand" aria-hidden="true">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="14"
+                  height="14"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </span>
             </article>
           );
           })}
