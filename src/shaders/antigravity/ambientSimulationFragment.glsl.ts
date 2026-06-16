@@ -100,12 +100,21 @@ ${layoutFlow}
   pos += diff * ${settleRate};
 
   float energy = length(flow + fineFlow * 0.45);
+
+  // Static per-particle grain: drives depth layering and a per-particle twinkle phase.
+  float grain = snoise(vec3(refPos * 37.0 + vec2(5.2, 8.7), 4.0)) * 0.5 + 0.5;
+  float depth = mix(0.86, 1.16, grain);
+  float twinkle = sin(uTime * 1.4 + grain * 6.2831853);
+
   float targetScale = 0.32 + smoothstep(0.25, 1.25, energy) * 0.7;
+  targetScale *= depth;
+  targetScale *= 1.0 + twinkle * 0.1 * grain;
   targetScale += snoise(vec3(refPos * 2.0 + vec2(74.664, 91.556), time * 0.55)) * ${scaleNoise};
   scale += (targetScale - scale) * 0.02;
 
   velocity *= 0.58;
   velocity += length(diff) * 7.0;
+  velocity += (twinkle * 0.5 + 0.5) * 0.04 * grain;
 
   gl_FragColor = vec4(pos, scale, velocity);
 }
