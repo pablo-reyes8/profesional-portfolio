@@ -186,7 +186,7 @@ function Experience() {
 
             return (
             <article
-              className={`experience-card ${isExpanded ? "is-expanded" : ""}`}
+              className={`experience-card is-${experience.tone} ${isExpanded ? "is-expanded" : ""}`}
               key={`${experience.role}-${experience.period}`}
               role="button"
               tabIndex={0}
@@ -199,6 +199,9 @@ function Experience() {
                 }
               }}
             >
+              <span className="experience-rail" aria-hidden="true" />
+              <span className="experience-node" aria-hidden="true" />
+
               <div className="experience-index" aria-hidden="true">
                 {String(index + 1).padStart(2, "0")}
               </div>
@@ -230,12 +233,14 @@ function Experience() {
                 <p className="experience-summary">{t(experience.summary)}</p>
 
                 <div className="experience-details" aria-hidden={!isExpanded}>
-                  <p>{t(experience.detail)}</p>
-                  <ul className="experience-signals">
-                    {experience.signals.map((signal) => (
-                      <li key={signal}>{t(signal)}</li>
-                    ))}
-                  </ul>
+                  <div className="experience-details-inner">
+                    <p>{t(experience.detail)}</p>
+                    <ul className="experience-signals">
+                      {experience.signals.map((signal) => (
+                        <li key={signal}>{t(signal)}</li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
 
                 <div className="experience-methods" aria-label={t("Methods and tools")}>
@@ -244,7 +249,23 @@ function Experience() {
                   ))}
                 </div>
 
-                <p className="experience-action">{isExpanded ? t("Click to collapse") : t("Click to see details")}</p>
+                <p className="experience-action">
+                  <span>{isExpanded ? t("Click to collapse") : t("Click to see details")}</span>
+                  <svg
+                    className="experience-chevron"
+                    viewBox="0 0 24 24"
+                    width="14"
+                    height="14"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M6 9l6 6 6-6" />
+                  </svg>
+                </p>
               </div>
             </article>
           );
