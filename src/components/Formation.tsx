@@ -11,6 +11,7 @@ interface EducationItem {
   focus: string[];
   credentials: CertificateLink[];
   logo?: string;
+  logoCrop?: boolean;
   mark: string;
   tone: "red" | "gold" | "blue" | "ink";
 }
@@ -40,7 +41,8 @@ const education: EducationItem[] = [
     ],
     focus: ["Economics", "Econometrics", "Quant Methods", "Applied AI", "Research"],
     credentials: [{ label: "Economics Degree Act", href: "/certifications/economia/economics-degree-acta.pdf" }],
-    logo: "/logos/logo-uec.png",
+    logo: "/logos/logo-externado.jpg",
+    logoCrop: true,
     mark: "UE",
     tone: "red"
   },
@@ -56,7 +58,8 @@ const education: EducationItem[] = [
     ],
     focus: ["Business Intelligence", "Analytics", "Machine Learning", "Data Management", "Strategy"],
     credentials: [],
-    logo: "/logos/logo-uec.png",
+    logo: "/logos/logo-externado.jpg",
+    logoCrop: true,
     mark: "BI",
     tone: "red"
   },
@@ -72,7 +75,8 @@ const education: EducationItem[] = [
     ],
     focus: ["Data Science", "Python", "Machine Learning", "Statistical Modeling", "Reproducible Workflows"],
     credentials: [],
-    logo: "/logos/logo-uec.png",
+    logo: "/logos/logo-externado.jpg",
+    logoCrop: true,
     mark: "DS",
     tone: "red"
   },
@@ -215,7 +219,10 @@ function Formation() {
                 }
               }}
             >
-              <div className={`formation-mark is-${item.tone}`} aria-hidden="true">
+              <div
+                className={`formation-mark is-${item.tone} ${item.logoCrop ? "is-cropped" : ""}`}
+                aria-hidden="true"
+              >
                 {item.logo ? <img src={item.logo} alt="" loading="lazy" /> : item.mark}
               </div>
 
