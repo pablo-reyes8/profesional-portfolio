@@ -33,8 +33,8 @@ const translations: Record<string, string> = {
   ", and applied machine learning. I": " y machine learning aplicado. Actualmente",
   "currently work at the Central Bank of Colombia as a researcher in the team":
     "trabajo en el Banco de la República como investigador en el equipo",
-  "of Board Member Mauricio Villamizar, developing empirical research on":
-    "del codirector Mauricio Villamizar, desarrollando investigación empírica sobre",
+  "of Board Member ": "del codirector ",
+  ", developing empirical research on": ", desarrollando investigación empírica sobre",
   "financial data, market behavior, and economic policy questions.":
     "datos financieros, comportamiento de mercado y política económica.",
   "My work combines ": "Mi trabajo combina ",
@@ -402,6 +402,14 @@ Object.assign(translations, {
   "Evoformer and structure module implemented": "Evoformer y módulo estructural implementados",
   "FAPE, distogram, pLDDT, and torsion losses": "Pérdidas FAPE, distograma, pLDDT y torsión",
   "Ablation-ready training and data inspection CLIs": "CLIs para entrenamiento, ablación e inspección",
+  "Kimi K3 Research Reproduction": "Reproducción investigativa de Kimi K3",
+  "A from-scratch PyTorch reproduction of Kimi K3, spanning compact single-GPU profiles through the canonical frontier-model topology.":
+    "Reproducción de Kimi K3 desde cero en PyTorch, desde perfiles compactos para una GPU hasta la topología canónica del modelo frontera.",
+  "Reconstructs Kimi K3 as a modular research system with Kimi Delta Attention, Gated Multi-head Latent Attention, the 3:1 hybrid backbone, Stable LatentMoE, Attention Residuals, MoonViT, multi-token prediction, progressive context training, and cached autoregressive inference.":
+    "Reconstruye Kimi K3 como sistema modular de investigación con Kimi Delta Attention, Gated Multi-head Latent Attention, backbone híbrido 3:1, Stable LatentMoE, Attention Residuals, MoonViT, predicción multitoken, contexto progresivo e inferencia autorregresiva con caché.",
+  "3:1 KDA and Gated MLA hybrid backbone": "Backbone híbrido 3:1 con KDA y Gated MLA",
+  "Stable LatentMoE and Attention Residuals": "Stable LatentMoE y Attention Residuals",
+  "CPU-to-canonical YAML experiment profiles": "Perfiles YAML desde CPU hasta la topología canónica",
   "DeepSeek-V4 Mini Systems Lab": "Lab mini de sistemas DeepSeek-V4",
   "A paper-faithful mini implementation of DeepSeek-V4 mechanisms for transparent experiments in long-context language modeling.":
     "Implementación mini fiel a DeepSeek-V4 para experimentos transparentes en modelado de lenguaje de largo contexto.",

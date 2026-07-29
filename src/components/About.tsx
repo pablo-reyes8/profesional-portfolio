@@ -44,7 +44,16 @@ function About() {
               {" "}{t("on ")}<strong>{t("computer vision")}</strong>,{" "}
               <strong>{t("causal inference")}</strong>, <strong>{t("Bayesian methods")}</strong>
               {t(", and applied machine learning. I")} {t("currently work at the Central Bank of Colombia as a researcher in the team")}{" "}
-              {t("of Board Member Mauricio Villamizar, developing empirical research on")}{" "}
+              {t("of Board Member ")}
+              <a
+                className="about-inline-link"
+                href="https://scholar.google.com/citations?user=ISRsaiYAAAAJ&hl=en"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Mauricio Villamizar
+              </a>
+              {t(", developing empirical research on")}{" "}
               {t("financial data, market behavior, and economic policy questions.")}
             </p>
 

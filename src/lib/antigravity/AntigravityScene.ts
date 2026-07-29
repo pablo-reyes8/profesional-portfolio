@@ -94,7 +94,6 @@ export class AntigravityScene {
       antialias: true,
       alpha: true,
       powerPreference: "high-performance",
-      preserveDrawingBuffer: true,
       stencil: false,
       precision: "highp"
     });

@@ -90,6 +90,7 @@ const stackIcons: Record<string, string> = {
   MCMC: "r",
   MLflow: "mlflow",
   MoE: "pytorch",
+  MoonViT: "pytorch",
   "Muon's": "pytorch",
   Muon: "pytorch",
   NLP: "spacy",
@@ -423,6 +424,18 @@ function ProjectResultsPanel({ bundle }: { bundle: ProjectResultBundle }) {
 
 const projects: ProjectItem[] = [
   {
+    id: "kimi-k3",
+    category: "Feature",
+    title: "Kimi K3 Research Reproduction",
+    source: "kimiK3.md",
+    github: "https://github.com/pablo-reyes8/kimi-k3-pytorch",
+    summary: "A from-scratch PyTorch reproduction of Kimi K3, spanning compact single-GPU profiles through the canonical frontier-model topology.",
+    detail:
+      "Reconstructs Kimi K3 as a modular research system with Kimi Delta Attention, Gated Multi-head Latent Attention, the 3:1 hybrid backbone, Stable LatentMoE, Attention Residuals, MoonViT, multi-token prediction, progressive context training, and cached autoregressive inference.",
+    stack: ["Python", "PyTorch", "Transformers", "MoE", "MoonViT", "Muon"],
+    results: ["3:1 KDA and Gated MLA hybrid backbone", "Stable LatentMoE and Attention Residuals", "CPU-to-canonical YAML experiment profiles"]
+  },
+  {
     id: "alphafold2",
     category: "Feature",
     title: "AlphaFold2 Research Rebuild",
@@ -436,7 +449,7 @@ const projects: ProjectItem[] = [
   },
   {
     id: "deepseek-v4",
-    category: "Feature",
+    category: "Advanced Deep Learning",
     title: "DeepSeek-V4 Mini Systems Lab",
     source: "Deepseek-v4.md",
     github: "https://github.com/pablo-reyes8/deepseek-v4-mini-pytorch",

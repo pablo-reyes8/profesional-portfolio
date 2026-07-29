@@ -58,6 +58,30 @@ def test_project_cards_toggle_closed_from_expanded_state() -> None:
     assert "onClick={(event) => event.stopPropagation()}" in projects
 
 
+def test_about_scholar_link_and_kimi_feature_card_are_present() -> None:
+    about = read("src/components/About.tsx")
+    projects = read("src/components/Projects.tsx")
+
+    assert "https://scholar.google.com/citations?user=ISRsaiYAAAAJ&hl=en" in about
+    assert ">Mauricio Villamizar<" not in about
+    assert "Mauricio Villamizar" in about
+    assert "https://github.com/pablo-reyes8/kimi-k3-pytorch" in projects
+    assert projects.index('id: "kimi-k3"') < projects.index('id: "deepseek-v4"')
+
+
+def test_particle_scene_avoids_invisible_and_empty_gpu_work() -> None:
+    hero_particles = read("src/components/AntigravityParticleField.tsx")
+    ambient_particles = read("src/components/AmbientParticleBackground.tsx")
+    scene = read("src/lib/antigravity/AntigravityScene.ts")
+    particles = read("src/lib/antigravity/MainParticles.ts")
+
+    assert "queueMicrotask" in hero_particles
+    assert "scene = createScene()" in ambient_particles
+    assert "if (!isVisible || !scene)" in ambient_particles
+    assert "preserveDrawingBuffer" not in scene
+    assert "Math.ceil(Math.sqrt(this.count))" in particles
+
+
 def test_formation_cards_close_on_outside_click_and_scroll_on_mobile() -> None:
     formation = read("src/components/Formation.tsx")
     styles = read("src/styles/hero.css")

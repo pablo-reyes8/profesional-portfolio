@@ -14,89 +14,113 @@ function AmbientParticleBackground({ className, variant = "about" }: AmbientPart
       return undefined;
     }
 
-    const scene = new AntigravityScene({
-      container: containerRef.current,
-      theme: "light",
-      mode: "ambient",
-      ambientLayout:
-        variant === "contact"
-          ? "contact-field"
-          : variant === "formation"
-          ? "formation-bands"
-          : variant === "experience" || variant === "experienceLight"
-          ? "experience-stream"
-          : variant === "projectsTall"
-          ? "project-tall-ribbons"
-          : variant === "projects"
-            ? "project-ribbons"
-            : "field",
-      interactive: false,
-      density: variant === "contact" ? 190 : variant === "formation" ? 205 : variant === "experience" ? 265 : variant === "experienceLight" ? 215 : variant === "projectsTall" ? 275 : variant === "projects" ? 195 : 165,
-      particlesScale: variant === "contact" ? 1.32 : variant === "formation" ? 0.9 : variant === "experience" ? 0.9 : variant === "experienceLight" ? 0.84 : variant === "projectsTall" ? 1.31 : variant === "projects" ? 1.24 : 0.87,
-      alpha: variant === "contact" ? 1.28 : variant === "formation" ? 1.5 : variant === "experience" ? 1.84 : variant === "experienceLight" ? 1.66 : variant === "projectsTall" ? 1.42 : variant === "projects" ? 1.26 : 1.3,
-      colorFloor: variant === "contact" ? 0.44 : variant === "formation" ? 0.42 : variant === "experience" ? 0.88 : variant === "experienceLight" ? 0.82 : variant === "projectsTall" ? 0.34 : variant === "projects" ? 0.3 : 0,
-      pixelRatio: variant === "experienceLight" ? 1.5 : undefined,
-      colors:
-        variant === "formation"
-          ? {
-              color1: "#4d1423",
-              color2: "#bd162c",
-              color3: "#ffb21c"
-            }
-          : variant === "experience" || variant === "experienceLight"
-          ? {
-              color1: "#9b1230",
-              color2: "#ef3c2d",
-              color3: "#ffb21c"
-            }
-          : variant === "projects" || variant === "projectsTall" || variant === "contact"
-          ? {
-              color1: "#2a0d16",
-              color2: "#bd162c",
-              color3: "#ffb21c"
-            }
-          : undefined,
-      ringDisplacement: 0
-    });
-
-    let isVisible = true;
+    const container = containerRef.current;
+    let scene: AntigravityScene | null = null;
+    let isVisible = false;
     let frameId: number | null = null;
     let resizeFrameId: number | null = null;
+
+    const animate = (): void => {
+      if (!isVisible || !scene) {
+        frameId = null;
+        return;
+      }
+
+      scene.render();
+      frameId = window.requestAnimationFrame(animate);
+    };
+
+    const startAnimation = (): void => {
+      if (frameId === null) {
+        frameId = window.requestAnimationFrame(animate);
+      }
+    };
+
+    const createScene = (): AntigravityScene =>
+      new AntigravityScene({
+        container,
+        theme: "light",
+        mode: "ambient",
+        ambientLayout:
+          variant === "contact"
+            ? "contact-field"
+            : variant === "formation"
+            ? "formation-bands"
+            : variant === "experience" || variant === "experienceLight"
+            ? "experience-stream"
+            : variant === "projectsTall"
+            ? "project-tall-ribbons"
+            : variant === "projects"
+              ? "project-ribbons"
+              : "field",
+        interactive: false,
+        density: variant === "contact" ? 190 : variant === "formation" ? 205 : variant === "experience" ? 265 : variant === "experienceLight" ? 215 : variant === "projectsTall" ? 275 : variant === "projects" ? 195 : 165,
+        particlesScale: variant === "contact" ? 1.32 : variant === "formation" ? 0.9 : variant === "experience" ? 0.9 : variant === "experienceLight" ? 0.84 : variant === "projectsTall" ? 1.31 : variant === "projects" ? 1.24 : 0.87,
+        alpha: variant === "contact" ? 1.28 : variant === "formation" ? 1.5 : variant === "experience" ? 1.84 : variant === "experienceLight" ? 1.66 : variant === "projectsTall" ? 1.42 : variant === "projects" ? 1.26 : 1.3,
+        colorFloor: variant === "contact" ? 0.44 : variant === "formation" ? 0.42 : variant === "experience" ? 0.88 : variant === "experienceLight" ? 0.82 : variant === "projectsTall" ? 0.34 : variant === "projects" ? 0.3 : 0,
+        pixelRatio: variant === "experienceLight" ? 1.5 : undefined,
+        colors:
+          variant === "formation"
+            ? {
+                color1: "#4d1423",
+                color2: "#bd162c",
+                color3: "#ffb21c"
+              }
+            : variant === "experience" || variant === "experienceLight"
+            ? {
+                color1: "#9b1230",
+                color2: "#ef3c2d",
+                color3: "#ffb21c"
+              }
+            : variant === "projects" || variant === "projectsTall" || variant === "contact"
+            ? {
+                color1: "#2a0d16",
+                color2: "#bd162c",
+                color3: "#ffb21c"
+              }
+            : undefined,
+        ringDisplacement: 0
+      });
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         isVisible = entry.isIntersecting;
+
         if (entry.isIntersecting) {
+          if (!scene) {
+            scene = createScene();
+            scene.resize();
+          }
           scene.resume();
+          startAnimation();
         } else {
-          scene.stop();
+          scene?.stop();
+          if (frameId !== null) {
+            window.cancelAnimationFrame(frameId);
+            frameId = null;
+          }
         }
       },
       { threshold: 0 }
     );
 
-    observer.observe(containerRef.current);
+    observer.observe(container);
 
     const resizeObserver = new ResizeObserver(() => {
+      if (!scene) {
+        return;
+      }
+
       if (resizeFrameId !== null) {
         window.cancelAnimationFrame(resizeFrameId);
       }
 
       resizeFrameId = window.requestAnimationFrame(() => {
-        scene.resize();
+        scene?.resize();
       });
     });
 
-    resizeObserver.observe(containerRef.current);
-
-    const animate = (): void => {
-      frameId = window.requestAnimationFrame(animate);
-      if (isVisible) {
-        scene.render();
-      }
-    };
-
-    animate();
+    resizeObserver.observe(container);
 
     return () => {
       observer.disconnect();
@@ -107,7 +131,7 @@ function AmbientParticleBackground({ className, variant = "about" }: AmbientPart
       if (resizeFrameId !== null) {
         window.cancelAnimationFrame(resizeFrameId);
       }
-      scene.kill();
+      scene?.kill();
     };
   }, [variant]);
 

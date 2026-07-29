@@ -50,7 +50,7 @@ export class MainParticles {
   private noise = new ValueNoise();
   private pointsData: number[] = [];
   private count = 0;
-  private size = 256;
+  private size = 1;
   private length = this.size * this.size;
   private lastTime = 0;
   private everRendered = false;
@@ -76,8 +76,9 @@ export class MainParticles {
   private createPoints(): void {
     const points = createAntigravityPoissonPoints(this.scene.density);
     this.pointsData = [];
+    const maxParticleCount = 256 * 256;
 
-    for (let i = 0; i < points.length && i < this.length; i += 1) {
+    for (let i = 0; i < points.length && i < maxParticleCount; i += 1) {
       if (this.scene.mode === "ambient") {
         const rawX = points[i][0] / 500;
         const rawY = points[i][1] / 500;
@@ -124,6 +125,8 @@ export class MainParticles {
     }
 
     this.count = this.pointsData.length / 2;
+    this.size = Math.max(1, Math.ceil(Math.sqrt(this.count)));
+    this.length = this.size * this.size;
   }
 
   private createDataTexturePosition(): THREE.DataTexture {

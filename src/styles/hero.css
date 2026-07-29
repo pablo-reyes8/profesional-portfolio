@@ -294,6 +294,28 @@
   font-weight: 820;
 }
 
+.about-inline-link {
+  color: #bd162c;
+  font-weight: 820;
+  text-decoration-color: rgba(189, 22, 44, 0.42);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 0.18em;
+  transition:
+    color 160ms ease,
+    text-decoration-color 160ms ease;
+}
+
+.about-inline-link:hover {
+  color: #8f1022;
+  text-decoration-color: currentColor;
+}
+
+.about-inline-link:focus-visible {
+  border-radius: 3px;
+  outline: 2px solid rgba(189, 22, 44, 0.38);
+  outline-offset: 3px;
+}
+
 .about-copy .about-lead {
   color: #101014;
   font-weight: 820;
@@ -1328,7 +1350,8 @@
 
 @media (max-width: 760px) {
   .projects-heading-row,
-  .project-grid {
+  .project-grid,
+  .project-grid.is-feature {
     grid-template-columns: 1fr;
   }
 
