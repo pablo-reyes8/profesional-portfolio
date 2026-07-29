@@ -426,10 +426,10 @@ const projects: ProjectItem[] = [
   {
     id: "kimi-k3",
     category: "Feature",
-    title: "Kimi K3 Research Reproduction",
+    title: "Kimi K3 Frontier Systems Lab",
     source: "kimiK3.md",
     github: "https://github.com/pablo-reyes8/kimi-k3-pytorch",
-    summary: "A from-scratch PyTorch reproduction of Kimi K3, spanning compact single-GPU profiles through the canonical frontier-model topology.",
+    summary: "KDA, Gated MLA, Stable LatentMoE, and MoonViT unified in a scalable PyTorch lab—from single-GPU experiments to the canonical topology.",
     detail:
       "Reconstructs Kimi K3 as a modular research system with Kimi Delta Attention, Gated Multi-head Latent Attention, the 3:1 hybrid backbone, Stable LatentMoE, Attention Residuals, MoonViT, multi-token prediction, progressive context training, and cached autoregressive inference.",
     stack: ["Python", "PyTorch", "Transformers", "MoE", "MoonViT", "Muon"],

@@ -402,9 +402,9 @@ Object.assign(translations, {
   "Evoformer and structure module implemented": "Evoformer y módulo estructural implementados",
   "FAPE, distogram, pLDDT, and torsion losses": "Pérdidas FAPE, distograma, pLDDT y torsión",
   "Ablation-ready training and data inspection CLIs": "CLIs para entrenamiento, ablación e inspección",
-  "Kimi K3 Research Reproduction": "Reproducción investigativa de Kimi K3",
-  "A from-scratch PyTorch reproduction of Kimi K3, spanning compact single-GPU profiles through the canonical frontier-model topology.":
-    "Reproducción de Kimi K3 desde cero en PyTorch, desde perfiles compactos para una GPU hasta la topología canónica del modelo frontera.",
+  "Kimi K3 Frontier Systems Lab": "Laboratorio de sistemas frontera Kimi K3",
+  "KDA, Gated MLA, Stable LatentMoE, and MoonViT unified in a scalable PyTorch lab—from single-GPU experiments to the canonical topology.":
+    "KDA, Gated MLA, Stable LatentMoE y MoonViT reunidos en un laboratorio PyTorch escalable: desde experimentos en una GPU hasta la topología canónica.",
   "Reconstructs Kimi K3 as a modular research system with Kimi Delta Attention, Gated Multi-head Latent Attention, the 3:1 hybrid backbone, Stable LatentMoE, Attention Residuals, MoonViT, multi-token prediction, progressive context training, and cached autoregressive inference.":
     "Reconstruye Kimi K3 como sistema modular de investigación con Kimi Delta Attention, Gated Multi-head Latent Attention, backbone híbrido 3:1, Stable LatentMoE, Attention Residuals, MoonViT, predicción multitoken, contexto progresivo e inferencia autorregresiva con caché.",
   "3:1 KDA and Gated MLA hybrid backbone": "Backbone híbrido 3:1 con KDA y Gated MLA",
