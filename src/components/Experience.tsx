@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, type CSSProperties } from "react";
 import AmbientParticleBackground from "./AmbientParticleBackground";
 import { useLanguage } from "../i18n";
 
@@ -167,113 +167,108 @@ function Experience() {
 
   return (
     <section id="experience" className="experience-section" ref={sectionRef}>
-      <AmbientParticleBackground className="experience-particles" variant="experience" />
+      <AmbientParticleBackground variant="experience" />
 
       <div className="experience-container">
-        <p className="section-eyebrow">{t("Experience")}</p>
+        <header className="section-head" data-reveal style={{ "--reveal-i": 0 } as CSSProperties}>
+          <h2 className="section-title">
+            {t("Experience")}
+            <sup className="section-count">{experiences.length}</sup>
+          </h2>
+          <p className="section-lead">{t("Research experience in machine learning and economics.")}</p>
+        </header>
 
-        <div className="experience-header">
-          <h2>{t("Research experience in machine learning and economics.")}</h2>
-          <p>
-            {t("My current work connects empirical economic research with production-minded data pipelines and deep learning systems for high-impact social problems.")}
-          </p>
-        </div>
+        <p className="experience-intro" data-reveal style={{ "--reveal-i": 1 } as CSSProperties}>
+          {t("My current work connects empirical economic research with production-minded data pipelines and deep learning systems for high-impact social problems.")}
+        </p>
 
-        <div className="experience-timeline" aria-label={t("Professional and research experience")}>
-          {visibleExperiences.map((experience, index) => {
+        <ol
+          className="experience-timeline"
+          aria-label={t("Professional and research experience")}
+          data-reveal
+          style={{ "--reveal-i": 2 } as CSSProperties}
+        >
+          {visibleExperiences.map((experience) => {
             const id = experience.role.toLowerCase().replaceAll(" ", "-");
             const isExpanded = expandedId === id;
+            const isCurrent = experience.period.includes("Present");
+            const toggle = () => setExpandedId(isExpanded ? "" : id);
 
             return (
-            <article
-              className={`experience-card is-${experience.tone} ${isExpanded ? "is-expanded" : ""}`}
-              key={`${experience.role}-${experience.period}`}
-              role="button"
-              tabIndex={0}
-              aria-expanded={isExpanded}
-              onClick={() => setExpandedId(isExpanded ? "" : id)}
-              onKeyDown={(event) => {
-                if (event.key === "Enter" || event.key === " ") {
-                  event.preventDefault();
-                  setExpandedId(isExpanded ? "" : id);
-                }
-              }}
-            >
-              <span className="experience-rail" aria-hidden="true" />
-              <span className="experience-node" aria-hidden="true" />
-
-              <div className="experience-index" aria-hidden="true">
-                {String(index + 1).padStart(2, "0")}
-              </div>
-
-              <div
-                className={[
-                  "experience-logo",
-                  `is-${experience.tone}`,
-                  experience.logoSrc ? "has-image" : "",
-                  experience.logoCrop ? "is-cropped" : ""
-                ].filter(Boolean).join(" ")}
-                aria-hidden="true"
+              <li
+                className={`experience-card ${isExpanded ? "is-expanded" : ""} ${isCurrent ? "is-current" : ""}`}
+                key={`${experience.role}-${experience.period}`}
+                data-field-anchor
               >
-                {experience.logoSrc ? (
-                  <img src={experience.logoSrc} alt="" loading="lazy" />
-                ) : (
-                  experience.logo
-                )}
-              </div>
-
-              <div className="experience-body">
-                <div className="experience-meta">
-                  <span>{t(experience.period)}</span>
-                  <span>{t(experience.location)}</span>
+                <div className="experience-when">
+                  <p className="experience-period" data-anchor-y>
+                    {isCurrent ? <span className="experience-live" aria-hidden="true" /> : null}
+                    {t(experience.period)}
+                  </p>
+                  <p className="experience-org">
+                    <span
+                      className={["experience-logo", experience.logoCrop ? "is-cropped" : ""].filter(Boolean).join(" ")}
+                      aria-hidden="true"
+                    >
+                      {experience.logoSrc ? <img src={experience.logoSrc} alt="" loading="lazy" /> : experience.logo}
+                    </span>
+                    <span>{t(experience.organization)}</span>
+                  </p>
+                  <p className="experience-location">{t(experience.location)}</p>
                 </div>
 
-                <h3>{t(experience.role)}</h3>
-                <p className="experience-organization">{t(experience.organization)}</p>
-                <p className="experience-summary">{t(experience.summary)}</p>
+                <div className="experience-body" data-anchor-x>
+                  <h3>{t(experience.role)}</h3>
+                  <p className="experience-summary">{t(experience.summary)}</p>
 
-                <div className="experience-details" aria-hidden={!isExpanded}>
-                  <div className="experience-details-inner">
-                    <p>{t(experience.detail)}</p>
-                    <ul className="experience-signals">
-                      {experience.signals.map((signal) => (
-                        <li key={signal}>{t(signal)}</li>
+                  <div className="experience-details" aria-hidden={!isExpanded}>
+                    <div className="experience-details-inner">
+                      <p>{t(experience.detail)}</p>
+                      <ul className="experience-signals">
+                        {experience.signals.map((signal) => (
+                          <li key={signal}>{t(signal)}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div className="experience-footer">
+                    <ul className="experience-methods" aria-label={t("Methods and tools")}>
+                      {experience.methods.map((method) => (
+                        <li key={method}>{t(method)}</li>
                       ))}
                     </ul>
+
+                    <button
+                      className="experience-action"
+                      type="button"
+                      aria-expanded={isExpanded}
+                      onClick={toggle}
+                    >
+                      <span>{isExpanded ? t("Less") : t("Read more")}</span>
+                      <svg
+                        className="experience-chevron"
+                        viewBox="0 0 16 16"
+                        width="14"
+                        height="14"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                        strokeLinecap="round"
+                        aria-hidden="true"
+                      >
+                        <path d="M8 3v10M3 8h10" />
+                      </svg>
+                    </button>
                   </div>
                 </div>
-
-                <div className="experience-methods" aria-label={t("Methods and tools")}>
-                  {(isExpanded ? experience.methods : experience.methods.slice(0, 3)).map((method) => (
-                    <span key={method}>{t(method)}</span>
-                  ))}
-                </div>
-
-                <p className="experience-action">
-                  <span>{isExpanded ? t("Click to collapse") : t("Click to see details")}</span>
-                  <svg
-                    className="experience-chevron"
-                    viewBox="0 0 24 24"
-                    width="14"
-                    height="14"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden="true"
-                  >
-                    <path d="M6 9l6 6 6-6" />
-                  </svg>
-                </p>
-              </div>
-            </article>
-          );
+              </li>
+            );
           })}
-        </div>
+        </ol>
 
         {experiences.length > 2 ? (
-          <div className="experience-history-panel">
+          <div className="experience-history-panel" data-reveal style={{ "--reveal-i": 3 } as CSSProperties}>
             <button
               className="experience-history-toggle"
               type="button"

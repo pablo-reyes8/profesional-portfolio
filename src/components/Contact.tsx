@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState, type CSSProperties } from "react";
 import emailjs from "@emailjs/browser";
 import AmbientParticleBackground from "./AmbientParticleBackground";
 import { useLanguage } from "../i18n";
@@ -37,6 +37,28 @@ function Contact() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState<Status>("idle");
+  const footerRef = useRef<HTMLElement>(null);
+
+  // The closing name rises in only once the footer is actually on screen.
+  useEffect(() => {
+    const footer = footerRef.current;
+    if (!footer || !("IntersectionObserver" in window)) {
+      footer?.classList.add("is-visible");
+      return undefined;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          footer.classList.add("is-visible");
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.35 }
+    );
+    observer.observe(footer);
+    return () => observer.disconnect();
+  }, []);
 
   const handleSubmit = (event: React.SyntheticEvent<HTMLFormElement>): void => {
     event.preventDefault();
@@ -70,18 +92,40 @@ function Contact() {
 
   return (
     <section id="contact" className="contact-section">
-      <AmbientParticleBackground className="contact-particles" variant="contact" />
+      <AmbientParticleBackground variant="contact" />
       <div className="contact-container">
-        <p className="section-eyebrow contact-eyebrow">{t("Contact")}</p>
+        <header className="section-head" data-reveal style={{ "--reveal-i": 0 } as CSSProperties}>
+          <h2 className="section-title">{t("Contact")}</h2>
+          <p className="section-lead">
+            {t("Interested in a data-driven solution for a complex research or quantitative problem?")}
+          </p>
+        </header>
 
-        <div className="contact-grid">
+        <div className="contact-grid" data-reveal style={{ "--reveal-i": 1 } as CSSProperties}>
           <div className="contact-copy">
-            <h2>
-              {t("Interested in a data-driven solution for a complex research or quantitative problem?")}
-            </h2>
             <p>
               {t("Send me a short note about the question, system, or research workflow you have in mind.")}
             </p>
+            <ul className="contact-links">
+              <li>
+                <a href="https://www.linkedin.com/in/pablo-alejandro-reyes-granados/" target="_blank" rel="noreferrer">
+                  <span>LinkedIn</span>
+                  <span className="contact-link-note">{t("Professional profile")}</span>
+                </a>
+              </li>
+              <li>
+                <a href="https://github.com/pablo-reyes8" target="_blank" rel="noreferrer">
+                  <span>GitHub</span>
+                  <span className="contact-link-note">{t("Code for every project above")}</span>
+                </a>
+              </li>
+              <li>
+                <a href="/cv/Hoja_de_Vida_Industria.pdf" target="_blank" rel="noreferrer">
+                  <span>{t("Curriculum vitae")}</span>
+                  <span className="contact-link-note">PDF</span>
+                </a>
+              </li>
+            </ul>
           </div>
 
           <form className="contact-form" onSubmit={handleSubmit}>
@@ -164,26 +208,32 @@ function Contact() {
 
       </div>
 
-      <footer className="portfolio-footer" aria-label={t("Portfolio footer")}>
+      <footer className="portfolio-footer" ref={footerRef} aria-label={t("Portfolio footer")}>
         <div className="portfolio-footer-inner">
-          <div className="portfolio-footer-identity">
-            <strong>Pablo Reyes</strong>
-            <span>{t("Economist & Data Scientist")}</span>
+          <p className="portfolio-footer-name" aria-hidden="true">
+            {"Pablo Reyes".split("").map((letter, index) => (
+              <span key={index} style={{ "--letter-i": index } as CSSProperties}>
+                {letter === " " ? " " : letter}
+              </span>
+            ))}
+          </p>
+          <div className="portfolio-footer-row">
+            <p>
+              <strong>Pablo Reyes</strong> · {t("Economist & Data Scientist")} · Bogotá
+            </p>
+            <nav aria-label={t("Footer links")}>
+              <a href="https://github.com/pablo-reyes8" target="_blank" rel="noreferrer">
+                GitHub
+              </a>
+              <a href="https://www.linkedin.com/in/pablo-alejandro-reyes-granados/" target="_blank" rel="noreferrer">
+                LinkedIn
+              </a>
+              <a href="/cv/Hoja_de_Vida_Industria.pdf" target="_blank" rel="noreferrer">
+                CV
+              </a>
+              <a href="#top">{t("Back to top")}</a>
+            </nav>
           </div>
-
-          <p>{t("Research, data systems, and machine learning built as professional code.")}</p>
-
-          <nav aria-label={t("Footer links")}>
-            <a href="https://github.com/pablo-reyes8" target="_blank" rel="noreferrer">
-              GitHub
-            </a>
-            <a href="https://www.linkedin.com/in/pablo-alejandro-reyes-granados/" target="_blank" rel="noreferrer">
-              LinkedIn
-            </a>
-            <a href="/cv/Hoja_de_Vida_Industria.pdf" target="_blank" rel="noreferrer">
-              CV
-            </a>
-          </nav>
         </div>
       </footer>
     </section>

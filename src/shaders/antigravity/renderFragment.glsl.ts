@@ -18,6 +18,8 @@ uniform float uAlpha;
 uniform float uTime;
 uniform float uColorFloor;
 uniform int uColorScheme;
+uniform float uClickEncoded;
+uniform vec3 uClickColor;
 
 ${simplexNoise}
 
@@ -37,6 +39,11 @@ vec2 rotate(vec2 v, float a) {
 }
 
 void main() {
+  // Ambient scenes pack the click level into the velocity channel: level * 2 + velocity.
+  float clickLevel = floor(vVelocity / 2.0) * uClickEncoded;
+  float velocity = vVelocity - clickLevel * 2.0;
+  float clickMix = clamp(clickLevel / 20.0, 0.0, 1.0);
+
   float uBorderSize = 0.2;
   float ratio = uRez.x / uRez.y;
 
@@ -58,7 +65,7 @@ void main() {
 
   float h = 0.8;
   float progress = smoothstep(0.0, 0.75, pow(noiseColor, 2.0));
-  progress = mix(progress, clamp(vVelocity, 0.0, 1.0), 0.58);
+  progress = mix(progress, clamp(velocity, 0.0, 1.0), 0.58);
 
   vec3 col = mix(
     mix(uColor1, uColor2, progress / h),
@@ -82,8 +89,12 @@ void main() {
   }
 
   color = clamp(color, 0.0, 1.0);
-  float colorEnergy = max(clamp(vVelocity, 0.0, 1.0), uColorFloor * smoothstep(0.28, 1.0, noiseColor));
+  float colorEnergy = max(clamp(velocity, 0.0, 1.0), uColorFloor * smoothstep(0.28, 1.0, noiseColor));
   color = mix(color, color * colorEnergy, float(uColorScheme));
+
+  // A clicked shape turns one colour.
+  color = mix(color, uClickColor, clickMix);
+  a = mix(a, max(a, 0.9 * rounded), clickMix);
 
   gl_FragColor = vec4(color, clamp(a, 0.0, 1.0));
 }

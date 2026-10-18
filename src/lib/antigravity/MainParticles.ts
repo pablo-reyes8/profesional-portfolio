@@ -30,6 +30,8 @@ class ValueNoise {
 const RING_FOLLOW_LERP = 0.2;
 const IDLE_RING_FOLLOW_LERP = 0.035;
 const SIMULATION_TIME_SCALE = 0.7;
+// Half the visible height in simulation units: tan(fov / 2) * camera distance / mesh scale.
+const VISIBLE_HALF_HEIGHT = (Math.tan((20 * Math.PI) / 180) * 3.1) / 5;
 
 export class MainParticles {
   readonly scene: AntigravityScene;
@@ -190,7 +192,15 @@ export class MainParticles {
         uRingWidth2: { value: 0.015 },
         uRingDisplacement: { value: this.scene.ringDisplacement },
         uMotionStrength: { value: this.scene.mode === "ambient" ? 1 : 0 },
-        uTime: { value: 0 }
+        uTime: { value: 0 },
+        uAspect: { value: 1 },
+        uUnitsPerPx: { value: 0.001 },
+        uClick: { value: new THREE.Vector2(0, 0) },
+        uClickAmount: { value: 0 },
+        uClickVariant: { value: 0 },
+        uClickScale: { value: 1 },
+        uAnchors: { value: Array.from({ length: 8 }, () => new THREE.Vector3()) },
+        uAnchorCount: { value: 0 }
       },
       vertexShader: simulationVertexShader,
       fragmentShader:
@@ -239,7 +249,10 @@ export class MainParticles {
         uParticleScale: { value: this.particleScale },
         uPixelRatio: { value: this.scene.pixelRatio },
         uColorFloor: { value: this.scene.colorFloor },
-        uColorScheme: { value: this.colorScheme }
+        uColorScheme: { value: this.colorScheme },
+        uClickEncoded: { value: this.scene.mode === "ambient" ? 1 : 0 },
+        // Soft light blue for clicked shapes: cooler than the warm palette, never saturated.
+        uClickColor: { value: new THREE.Color("#5b8fe0") }
       },
       vertexShader: renderVertexShader,
       fragmentShader: renderFragmentShader,
@@ -252,9 +265,19 @@ export class MainParticles {
     this.mesh.position.set(0, 0, 0);
     this.mesh.scale.set(5, -5, 5);
     this.scene.scene.add(this.mesh);
+    this.updateFrame();
+  }
+
+  /** Tell the ambient simulation how big the canvas is, so shapes keep their proportions. */
+  private updateFrame(): void {
+    const width = this.scene.container.offsetWidth || 1;
+    const height = this.scene.container.offsetHeight || 1;
+    this.simMaterial.uniforms.uAspect.value = width / height;
+    this.simMaterial.uniforms.uUnitsPerPx.value = (2 * VISIBLE_HALF_HEIGHT) / height;
   }
 
   resize(): void {
+    this.updateFrame();
     this.renderMaterial.uniforms.uRez.value.set(
       this.scene.renderer.domElement.width,
       this.scene.renderer.domElement.height
@@ -264,7 +287,7 @@ export class MainParticles {
   }
 
   update(): void {
-    const elapsed = this.scene.clock.getElapsedTime();
+    const elapsed = this.scene.elapsed();
     const simulationTime = elapsed * SIMULATION_TIME_SCALE;
     const deltaTime = elapsed - this.lastTime;
     this.lastTime = elapsed;
@@ -294,6 +317,19 @@ export class MainParticles {
     this.particleScale =
       (this.scene.renderer.domElement.width / this.scene.pixelRatio / 2000) *
       this.scene.particlesScale;
+
+    if (this.scene.mode === "ambient") {
+      const click = this.scene.click;
+      this.simMaterial.uniforms.uClick.value.set(click.x, click.y);
+      this.simMaterial.uniforms.uClickAmount.value = click.amount(elapsed);
+      this.simMaterial.uniforms.uClickVariant.value = click.variant;
+      this.simMaterial.uniforms.uClickScale.value = click.scale;
+      const anchors = this.scene.anchors;
+      this.simMaterial.uniforms.uAnchorCount.value = Math.min(8, anchors.length);
+      anchors.slice(0, 8).forEach((anchor, index) => {
+        this.simMaterial.uniforms.uAnchors.value[index].set(anchor.x, anchor.y, anchor.z);
+      });
+    }
 
     this.simMaterial.uniforms.uPosition.value = this.everRendered ? this.rt1.texture : this.posTex;
     this.simMaterial.uniforms.uTime.value = simulationTime;

@@ -3,7 +3,46 @@ import { AntigravityScene } from "../lib/antigravity/AntigravityScene";
 
 interface AmbientParticleBackgroundProps {
   className?: string;
-  variant?: "about" | "projects" | "projectsTall" | "experience" | "experienceLight" | "formation" | "contact";
+  variant?: AmbientVariant;
+}
+
+type AmbientVariant = "about" | "projects" | "projectsTall" | "experience" | "experienceLight" | "formation" | "contact";
+
+// Click shapes per section: [open space, crowded spot]. Indices match the ambient shader:
+// 0 rings, 1 card outline, 2 bell curve, 3 spark, 4 atom, 5 regression, 6 neural network, 7 histogram.
+const clickShapes: Record<AmbientVariant, [number, number]> = {
+  about: [4, 0],
+  projects: [6, 1],
+  projectsTall: [6, 1],
+  experience: [5, 0],
+  experienceLight: [5, 0],
+  formation: [2, 7],
+  contact: [3, 3]
+};
+
+// What counts as content when judging how crowded a spot is.
+const CONTENT_SELECTOR =
+  "h1, h2, h3, h4, p, li, dd, dt, a, button, img, input, textarea, label, .pcard, .edu-record, .edu-row, .stack-panel, .cert-row";
+
+/** Share (0 to 1) of points within ~110px of the pointer that land on content. */
+function measureDensity(clientX: number, clientY: number): number {
+  let hits = 0;
+  let samples = 0;
+  for (let ring = 1; ring <= 2; ring += 1) {
+    for (let step = 0; step < 8; step += 1) {
+      const angle = (step / 8) * Math.PI * 2 + ring * 0.4;
+      const x = clientX + Math.cos(angle) * ring * 55;
+      const y = clientY + Math.sin(angle) * ring * 55;
+      if (x < 0 || y < 0 || x > window.innerWidth || y > window.innerHeight) {
+        continue;
+      }
+      samples += 1;
+      if (document.elementFromPoint(x, y)?.closest(CONTENT_SELECTOR)) {
+        hits += 1;
+      }
+    }
+  }
+  return samples > 0 ? hits / samples : 0;
 }
 
 function AmbientParticleBackground({ className, variant = "about" }: AmbientParticleBackgroundProps) {
@@ -54,8 +93,8 @@ function AmbientParticleBackground({ className, variant = "about" }: AmbientPart
               ? "project-ribbons"
               : "field",
         interactive: false,
-        density: variant === "contact" ? 190 : variant === "formation" ? 205 : variant === "experience" ? 265 : variant === "experienceLight" ? 215 : variant === "projectsTall" ? 275 : variant === "projects" ? 195 : 165,
-        particlesScale: variant === "contact" ? 1.32 : variant === "formation" ? 0.9 : variant === "experience" ? 0.9 : variant === "experienceLight" ? 0.84 : variant === "projectsTall" ? 1.31 : variant === "projects" ? 1.24 : 0.87,
+        density: variant === "contact" ? 190 : variant === "formation" ? 205 : variant === "experience" ? 265 : variant === "experienceLight" ? 215 : variant === "projectsTall" ? 275 : variant === "projects" ? 195 : 215,
+        particlesScale: variant === "contact" ? 1.32 : variant === "formation" ? 0.9 : variant === "experience" ? 0.9 : variant === "experienceLight" ? 0.84 : variant === "projectsTall" ? 1.31 : variant === "projects" ? 1.24 : 1.02,
         alpha: variant === "contact" ? 1.28 : variant === "formation" ? 1.5 : variant === "experience" ? 1.84 : variant === "experienceLight" ? 1.66 : variant === "projectsTall" ? 1.42 : variant === "projects" ? 1.26 : 1.3,
         colorFloor: variant === "contact" ? 0.44 : variant === "formation" ? 0.42 : variant === "experience" ? 0.88 : variant === "experienceLight" ? 0.82 : variant === "projectsTall" ? 0.34 : variant === "projects" ? 0.3 : 0,
         pixelRatio: variant === "experienceLight" ? 1.5 : undefined,
@@ -90,6 +129,7 @@ function AmbientParticleBackground({ className, variant = "about" }: AmbientPart
           if (!scene) {
             scene = createScene();
             scene.resize();
+            measureAnchors();
           }
           scene.resume();
           startAnimation();
@@ -106,6 +146,54 @@ function AmbientParticleBackground({ className, variant = "about" }: AmbientPart
 
     observer.observe(container);
 
+    // A click anywhere in the section pulls nearby particles into a shape. Open space gets the
+    // section's fuller shape; a crowded spot gets a compact one.
+    const host = container.parentElement;
+    const handlePointerDown = (event: PointerEvent): void => {
+      if (!scene || event.button !== 0) {
+        return;
+      }
+
+      const density = measureDensity(event.clientX, event.clientY);
+      const [openShape, crowdedShape] = clickShapes[variant];
+      const isCrowded = density > 0.35;
+      const rect = container.getBoundingClientRect();
+      scene.triggerClick(
+        event.clientX - rect.left,
+        event.clientY - rect.top,
+        isCrowded ? crowdedShape : openShape,
+        isCrowded ? 0.82 : 1.2
+      );
+    };
+    host?.addEventListener("pointerdown", handlePointerDown);
+
+    // Elements marked data-field-anchor (the Experience roles) become points the background
+    // grows toward: y from [data-anchor-y], x from [data-anchor-x].
+    const measureAnchors = (): void => {
+      if (!scene || !host) {
+        return;
+      }
+
+      const origin = container.getBoundingClientRect();
+      const anchors = Array.from(host.querySelectorAll<HTMLElement>("[data-field-anchor]"))
+        .slice(0, 8)
+        .map((element) => {
+          const yRect = (element.querySelector("[data-anchor-y]") ?? element).getBoundingClientRect();
+          const xRect = (element.querySelector("[data-anchor-x]") ?? element).getBoundingClientRect();
+          return {
+            x: xRect.left - origin.left,
+            y: yRect.top + yRect.height / 2 - origin.top,
+            z: 0
+          };
+        });
+      scene.setAnchors(anchors);
+    };
+    const anchorTimer = window.setInterval(() => {
+      if (isVisible) {
+        measureAnchors();
+      }
+    }, 1200);
+
     const resizeObserver = new ResizeObserver(() => {
       if (!scene) {
         return;
@@ -117,12 +205,15 @@ function AmbientParticleBackground({ className, variant = "about" }: AmbientPart
 
       resizeFrameId = window.requestAnimationFrame(() => {
         scene?.resize();
+        measureAnchors();
       });
     });
 
     resizeObserver.observe(container);
 
     return () => {
+      host?.removeEventListener("pointerdown", handlePointerDown);
+      window.clearInterval(anchorTimer);
       observer.disconnect();
       resizeObserver.disconnect();
       if (frameId !== null) {

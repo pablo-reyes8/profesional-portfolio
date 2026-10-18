@@ -11,10 +11,10 @@ function Navbar() {
       </a>
 
       <nav className="navbar-links" aria-label={t("Main navigation")}>
-        <a href="#about">{t("About Me")}</a>
+        <a href="#about">{t("About")}</a>
         <a href="#projects">{t("Projects")}</a>
         <a href="#experience">{t("Experience")}</a>
-        <a href="#formation">{t("Formation")}</a>
+        <a href="#formation">{t("Education")}</a>
         <a href="#contact">{t("Contact")}</a>
         <a href="/cv/Hoja_de_Vida_Industria.pdf" target="_blank" rel="noreferrer">
           CV

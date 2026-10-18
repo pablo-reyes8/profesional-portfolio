@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useRef, useState, type CSSProperties, type MouseEvent } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { createPortal } from "react-dom";
 import AmbientParticleBackground from "./AmbientParticleBackground";
 import { useLanguage } from "../i18n";
 
@@ -54,7 +55,6 @@ const categories: ProjectCategory[] = [
   "Machine Learning Applications"
 ];
 
-const desktopProjectsPerRow = 4;
 
 const stackIcons: Record<string, string> = {
   Airflow: "apacheairflow",
@@ -138,17 +138,6 @@ function GitHubIcon() {
       <path
         fill="currentColor"
         d="M12 2C6.48 2 2 6.58 2 12.26c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.49v-1.9c-2.78.62-3.37-1.22-3.37-1.22-.45-1.19-1.11-1.5-1.11-1.5-.91-.64.07-.63.07-.63 1 .07 1.53 1.06 1.53 1.06.9 1.57 2.35 1.12 2.92.86.09-.67.35-1.12.63-1.38-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05A9.3 9.3 0 0 1 12 6.97c.85 0 1.7.12 2.5.34 1.9-1.33 2.74-1.05 2.74-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.8-4.57 5.06.36.32.68.95.68 1.92v2.84c0 .27.18.59.69.49A10.08 10.08 0 0 0 22 12.26C22 6.58 17.52 2 12 2Z"
-      />
-    </svg>
-  );
-}
-
-function ResultsIcon() {
-  return (
-    <svg className="project-action-icon" viewBox="0 0 24 24" aria-hidden="true">
-      <path
-        fill="currentColor"
-        d="M5 19h14a1 1 0 1 1 0 2H4a1 1 0 0 1-1-1V5a1 1 0 0 1 2 0v14Zm3-2a1 1 0 0 1-1-1v-5a1 1 0 0 1 2 0v5a1 1 0 0 1-1 1Zm5 0a1 1 0 0 1-1-1V7a1 1 0 1 1 2 0v9a1 1 0 0 1-1 1Zm5 0a1 1 0 0 1-1-1v-8a1 1 0 1 1 2 0v8a1 1 0 0 1-1 1Z"
       />
     </svg>
   );
@@ -761,261 +750,409 @@ const projects: ProjectItem[] = [
   }
 ];
 
+function StackChips({ items }: { items: string[] }) {
+  return (
+    <div className="project-stack">
+      {items.map((item) => {
+        const iconUrl = getStackIconUrl(item);
+
+        return (
+          <span className="project-stack-chip" key={item}>
+            {iconUrl ? (
+              <img alt="" className="project-stack-icon" src={iconUrl} draggable={false} />
+            ) : (
+              <span className="project-stack-fallback">{item.slice(0, 1)}</span>
+            )}
+            {item}
+          </span>
+        );
+      })}
+    </div>
+  );
+}
+
+function ProjectDrawer({ project, onClose }: { project: ProjectItem; onClose: () => void }) {
+  const { t } = useLanguage();
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const resultBundle = projectResults[project.id];
+
+  const layerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const layer = layerRef.current;
+    closeRef.current?.focus({ preventScroll: true });
+
+    // Lock page scroll without touching overflow (that would unpin the gallery behind):
+    // swallow wheel and touch moves that do not start inside the panel.
+    const blockOutside = (event: Event): void => {
+      if (!(event.target as Element).closest(".project-drawer")) {
+        event.preventDefault();
+      }
+    };
+    const handleKey = (event: KeyboardEvent): void => {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    };
+
+    layer?.addEventListener("wheel", blockOutside, { passive: false });
+    layer?.addEventListener("touchmove", blockOutside, { passive: false });
+    window.addEventListener("keydown", handleKey);
+
+    return () => {
+      layer?.removeEventListener("wheel", blockOutside);
+      layer?.removeEventListener("touchmove", blockOutside);
+      window.removeEventListener("keydown", handleKey);
+    };
+  }, [onClose]);
+
+  return (
+    <div className="project-drawer-layer" ref={layerRef}>
+      <button type="button" className="project-drawer-backdrop" aria-label={t("Close")} onClick={onClose} />
+      <aside className="project-drawer" role="dialog" aria-modal="true" aria-labelledby="project-drawer-title">
+        <div className="project-drawer-bar">
+          <p className="project-detail-category">{project.category === "Feature" ? t("Featured") : t(project.category)}</p>
+          <button ref={closeRef} type="button" className="project-detail-close" aria-label={t("Close")} onClick={onClose}>
+            <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+              <path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+            </svg>
+          </button>
+        </div>
+
+        <div className="project-drawer-body">
+          <h3 id="project-drawer-title">{t(project.title)}</h3>
+          <p className="project-detail-summary">{t(project.summary)}</p>
+
+          <div className="project-actions">
+            <a className="project-action-button project-github" href={project.github} target="_blank" rel="noreferrer">
+              <GitHubIcon />
+              {t("GitHub Code")}
+            </a>
+          </div>
+
+          <div className="project-expanded-content">
+            <div className="project-expanded-copy">
+              <p>{t(project.detail)}</p>
+              <p>
+                {t("The portfolio focus here is the full research-to-code surface: modeling decisions, reproducible workflows, evaluation artifacts, and enough engineering structure for the system to be inspected, extended, and rerun.")}
+              </p>
+              <StackChips items={project.stack} />
+            </div>
+
+            <div className="project-results">
+              <p className="project-results-title">{t("Signals")}</p>
+              {project.results.map((result) => (
+                <span key={result}>{t(result)}</span>
+              ))}
+            </div>
+          </div>
+
+          {resultBundle ? <ProjectResultsPanel bundle={resultBundle} /> : null}
+        </div>
+      </aside>
+    </div>
+  );
+}
+
 function Projects() {
   const { t } = useLanguage();
   const [activeCategory, setActiveCategory] = useState<ProjectCategory>("Feature");
-  const [expandedId, setExpandedId] = useState<string>("");
-  const [openResultsId, setOpenResultsId] = useState<string>("");
-  const [closingId, setClosingId] = useState<string>("");
-  const [isMobileProjects, setIsMobileProjects] = useState(false);
-  const closeTimeoutRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    const mobileQuery = window.matchMedia("(max-width: 760px)");
-    const updateMobileState = (): void => setIsMobileProjects(mobileQuery.matches);
-
-    updateMobileState();
-    mobileQuery.addEventListener("change", updateMobileState);
-
-    return () => mobileQuery.removeEventListener("change", updateMobileState);
-  }, []);
+  const [leaving, setLeaving] = useState(false);
+  const [openId, setOpenId] = useState("");
+  const [expandedId, setExpandedId] = useState("");
+  const [isPinned, setIsPinned] = useState(false);
+  const [pinHeight, setPinHeight] = useState<number | null>(null);
+  const pinRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const progressRef = useRef<HTMLSpanElement>(null);
+  const travelRef = useRef(0);
+  const offsetRef = useRef(0);
+  const switchTimerRef = useRef<number | null>(null);
 
   const visibleProjects = useMemo(
     () => projects.filter((project) => project.category === activeCategory),
     [activeCategory]
   );
+  const openProject = projects.find((project) => project.id === openId) ?? null;
+  const categoryLabel = (category: ProjectCategory): string => (category === "Feature" ? t("Featured") : t(category));
+  const closeProject = useCallback(() => setOpenId(""), []);
 
-  const orderedProjects = useMemo(() => {
-    if (!expandedId || isMobileProjects) {
-      return visibleProjects;
+  // Wide screens: the gallery pins and vertical scroll drives it sideways. The motion follows
+  // the reader's own scrolling, so it stays on even with reduced motion.
+  useEffect(() => {
+    const wide = window.matchMedia("(min-width: 900px)");
+    const update = (): void => setIsPinned(wide.matches);
+    update();
+    wide.addEventListener("change", update);
+    return () => wide.removeEventListener("change", update);
+  }, []);
+
+  // Size the pin so scrolling its height moves the track exactly its overflow.
+  useLayoutEffect(() => {
+    const stage = stageRef.current;
+    const track = trackRef.current;
+    if (!stage || !track) {
+      return undefined;
     }
 
-    const expandedProjectIndex = visibleProjects.findIndex((project) => project.id === expandedId);
-    const expandedProject = visibleProjects[expandedProjectIndex];
-    if (!expandedProject) {
-      return visibleProjects;
+    const measure = (): void => {
+      if (!isPinned) {
+        travelRef.current = 0;
+        setPinHeight(null);
+        return;
+      }
+
+      const travel = Math.max(0, track.scrollWidth - stage.clientWidth);
+      travelRef.current = travel;
+      setPinHeight(stage.clientHeight + travel);
+    };
+
+    measure();
+    const resizeObserver = new ResizeObserver(measure);
+    resizeObserver.observe(stage);
+    resizeObserver.observe(track);
+    return () => resizeObserver.disconnect();
+  }, [isPinned, activeCategory]);
+
+  // One loop for the gallery: eased track position and progress. The track is read every
+  // frame because switching category mounts a new one.
+  useEffect(() => {
+    const pin = pinRef.current;
+    const stage = stageRef.current;
+    if (!pin || !stage) {
+      return undefined;
     }
 
-    const remainingProjects = visibleProjects.filter((project) => project.id !== expandedId);
-    const rowStartIndex =
-      Math.floor(expandedProjectIndex / desktopProjectsPerRow) * desktopProjectsPerRow;
-    const insertionIndex = Math.min(rowStartIndex, remainingProjects.length);
+    let frameId: number | null = null;
+    let active = false;
 
-    return [
-      ...remainingProjects.slice(0, insertionIndex),
-      expandedProject,
-      ...remainingProjects.slice(insertionIndex)
-    ];
-  }, [expandedId, isMobileProjects, visibleProjects]);
+    const tick = (): void => {
+      const track = trackRef.current;
+      if (track) {
+        let progress = 0;
 
+        if (isPinned) {
+          const pinRect = pin.getBoundingClientRect();
+          const distance = Math.max(1, pin.offsetHeight - stage.offsetHeight);
+          progress = Math.min(1, Math.max(0, (stage.getBoundingClientRect().top - pinRect.top) / distance));
+          const target = -progress * travelRef.current;
+          offsetRef.current += (target - offsetRef.current) * 0.12;
+          if (Math.abs(target - offsetRef.current) < 0.1) {
+            offsetRef.current = target;
+          }
+          track.style.transform = `translate3d(${offsetRef.current.toFixed(2)}px, 0, 0)`;
+        } else {
+          track.style.transform = "";
+          const maxScroll = track.scrollWidth - track.clientWidth;
+          progress = maxScroll > 0 ? track.scrollLeft / maxScroll : 0;
+        }
+
+        if (progressRef.current) {
+          progressRef.current.style.transform = `scaleX(${Math.max(0.04, progress).toFixed(4)})`;
+        }
+      }
+
+      frameId = active ? window.requestAnimationFrame(tick) : null;
+    };
+
+    const observer = new IntersectionObserver(([entry]) => {
+      active = entry.isIntersecting;
+      if (active && frameId === null) {
+        frameId = window.requestAnimationFrame(tick);
+      }
+    });
+    observer.observe(pin);
+
+    return () => {
+      observer.disconnect();
+      if (frameId !== null) {
+        window.cancelAnimationFrame(frameId);
+      }
+    };
+  }, [isPinned]);
+
+  useEffect(
+    () => () => {
+      if (switchTimerRef.current !== null) {
+        window.clearTimeout(switchTimerRef.current);
+      }
+    },
+    []
+  );
+
+  // Switching category: the whole row sweeps out to the left, then the new row sweeps in from
+  // the right. The cards themselves stay still.
   const handleCategoryChange = (category: ProjectCategory): void => {
-    if (closeTimeoutRef.current !== null) {
-      window.clearTimeout(closeTimeoutRef.current);
-      closeTimeoutRef.current = null;
-    }
-    setActiveCategory(category);
-    setExpandedId("");
-    setOpenResultsId("");
-    setClosingId("");
-  };
-
-  const handleProjectOpen = (projectId: string): void => {
-    if (expandedId === projectId) {
-      closeExpandedProject();
+    if (category === activeCategory || leaving) {
       return;
     }
 
-    if (closeTimeoutRef.current !== null) {
-      window.clearTimeout(closeTimeoutRef.current);
-      closeTimeoutRef.current = null;
-    }
-    if (expandedId !== projectId) {
-      setOpenResultsId("");
-    }
-    setClosingId("");
-    setExpandedId(projectId);
-  };
-
-  const closeExpandedProject = (): void => {
-    if (!expandedId || closingId) {
-      return;
-    }
-
-    setOpenResultsId("");
-    setClosingId(expandedId);
-    closeTimeoutRef.current = window.setTimeout(() => {
+    setLeaving(true);
+    switchTimerRef.current = window.setTimeout(() => {
+      offsetRef.current = 0;
+      trackRef.current?.scrollTo({ left: 0 });
       setExpandedId("");
-      setClosingId("");
-      closeTimeoutRef.current = null;
-    }, 190);
-  };
+      setActiveCategory(category);
+      setLeaving(false);
+      switchTimerRef.current = null;
+    }, 360);
 
-  const handleSectionClick = (event: MouseEvent<HTMLElement>): void => {
-    if (!expandedId) {
-      return;
+    // Part-way through the gallery? Bring the reader back to its start.
+    const pin = pinRef.current;
+    if (isPinned && pin && pin.getBoundingClientRect().top < -4) {
+      const navbarHeight = Number.parseFloat(
+        getComputedStyle(document.documentElement).getPropertyValue("--navbar-height")
+      ) || 64;
+      window.dispatchEvent(
+        new CustomEvent("portfolio:smooth-scroll-to", {
+          detail: { top: pin.getBoundingClientRect().top + window.scrollY - navbarHeight }
+        })
+      );
     }
-
-    const target = event.target as Element;
-    if (
-      target.closest(".project-card.is-expanded") ||
-      target.closest(".project-card") ||
-      target.closest(".project-tabs")
-    ) {
-      return;
-    }
-
-    closeExpandedProject();
   };
-
-  const usesTallProjectBackground =
-    activeCategory === "Advanced Deep Learning" ||
-    activeCategory === "Architecture Design" ||
-    activeCategory === "Econometrics" ||
-    activeCategory === "Machine Learning Applications";
-  const hasOpenResults = Boolean(openResultsId);
 
   return (
-    <section
-      id="projects"
-      onClick={handleSectionClick}
-      className={[
-        "projects-section",
-        usesTallProjectBackground ? "is-tall-projects" : "",
-        hasOpenResults ? "is-results-open" : ""
-      ].filter(Boolean).join(" ")}
-    >
-      <AmbientParticleBackground
-        className="projects-particles"
-        variant={usesTallProjectBackground || hasOpenResults ? "projectsTall" : "projects"}
-      />
+    <section id="projects" className={`projects-section ${isPinned ? "is-pinned" : ""}`}>
       <div className="projects-container">
-        <p className="section-eyebrow">{t("Projects")}</p>
-        <div className="projects-heading-row">
-          <h2 className="projects-title">{t("Selected research systems, shipped as working code.")}</h2>
-        </div>
-
-        <div className="project-tabs" aria-label={t("Project categories")}>
-          {categories.map((category) => (
-            <button
-              className={`project-tab ${category === activeCategory ? "is-active" : ""}`}
-              key={category}
-              type="button"
-              onClick={() => handleCategoryChange(category)}
-            >
-              {category === "Feature" ? <span className="project-tab-star">★</span> : null}
-              {t(category)}
-            </button>
-          ))}
-        </div>
-
-        <div className={`project-grid ${activeCategory === "Feature" ? "is-feature" : ""} ${expandedId ? "has-expanded" : ""}`}>
-          {orderedProjects.map((project) => {
-            const isExpanded = project.id === expandedId;
-            const resultBundle = projectResults[project.id];
-            const isResultsOpen = openResultsId === project.id;
-            const stackItems = isExpanded ? project.stack : project.stack.slice(0, 4);
-            return (
-              <article
-                className={`project-card ${isExpanded ? "is-expanded" : ""} ${closingId === project.id ? "is-closing" : ""}`}
-                key={project.id}
-                role="button"
-                tabIndex={0}
-                aria-expanded={isExpanded}
-                onClick={() => handleProjectOpen(project.id)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault();
-                    handleProjectOpen(project.id);
-                  }
-                }}
-              >
-                <div className="project-card-topline">
-                  <span>{t(project.category)}</span>
-                  <span>{isExpanded ? t("Expanded") : t("Open project")}</span>
-                </div>
-                <h3>{t(project.title)}</h3>
-                <p className="project-summary">{t(project.summary)}</p>
-                {isExpanded ? (
-                  <div className="project-expanded-content">
-                    <div className="project-expanded-copy">
-                      <p>{t(project.detail)}</p>
-                      <p>
-                        {t("The portfolio focus here is the full research-to-code surface: modeling decisions, reproducible workflows, evaluation artifacts, and enough engineering structure for the system to be inspected, extended, and rerun.")}
-                      </p>
-                    </div>
-                    <div className="project-results">
-                      <p className="project-results-title">{t("Signals")}</p>
-                      {project.results.map((result) => (
-                        <span key={result}>{t(result)}</span>
-                      ))}
-                    </div>
-                  </div>
-                ) : null}
-                <div className="project-stack">
-                  {stackItems.map((item, index) => {
-                    const iconUrl = getStackIconUrl(item);
-                    return (
-                      <span
-                        className="project-stack-chip"
-                        key={item}
-                        style={{ "--chip-index": index } as CSSProperties}
-                      >
-                        {iconUrl ? (
-                          <img alt="" className="project-stack-icon" src={iconUrl} />
-                        ) : (
-                          <span className="project-stack-fallback">{item.slice(0, 1)}</span>
-                        )}
-                        {item}
-                      </span>
-                    );
-                  })}
-                </div>
-                <div className="project-actions">
-                  {isExpanded ? (
-                    <button
-                      className="project-action-button project-back"
-                      type="button"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        closeExpandedProject();
-                      }}
-                    >
-                      {t("Back")}
-                    </button>
-                  ) : null}
-                  <a
-                    className="project-action-button project-github"
-                    href={project.github}
-                    target="_blank"
-                    rel="noreferrer"
-                    onClick={(event) => event.stopPropagation()}
-                  >
-                    <GitHubIcon />
-                    {t("GitHub Code")}
-                  </a>
-                  {isExpanded && resultBundle ? (
-                    <button
-                      className={`project-action-button project-show-results ${isResultsOpen ? "is-active" : ""}`}
-                      type="button"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        setOpenResultsId(isResultsOpen ? "" : project.id);
-                      }}
-                    >
-                      <ResultsIcon />
-                      {isResultsOpen ? t("Hide Results") : t("Show Results")}
-                    </button>
-                  ) : null}
-                </div>
-                {isExpanded && resultBundle && isResultsOpen ? (
-                  <ProjectResultsPanel bundle={resultBundle} />
-                ) : null}
-              </article>
-            );
-          })}
-        </div>
-        <p className="project-grid-hint">{t("Click to see full details")}</p>
+        <header className="section-head" data-reveal style={{ "--reveal-i": 0 } as CSSProperties}>
+          <h2 className="section-title">
+            {t("Projects")}
+            <sup className="section-count">{projects.length}</sup>
+          </h2>
+          <p className="section-lead">{t("Selected research systems, shipped as working code.")}</p>
+        </header>
       </div>
+
+      <div className="project-pin" ref={pinRef} style={pinHeight ? { height: `${pinHeight}px` } : undefined}>
+        <div className="project-stage" ref={stageRef}>
+          <AmbientParticleBackground className="projects-particles" variant="projects" />
+
+          <div className="project-stage-top">
+            <div className="project-tabs" role="tablist" aria-label={t("Project categories")}>
+              {categories.map((category) => (
+                <button
+                  className={`project-tab ${category === activeCategory ? "is-active" : ""}`}
+                  key={category}
+                  type="button"
+                  role="tab"
+                  aria-selected={category === activeCategory}
+                  onClick={() => handleCategoryChange(category)}
+                >
+                  {categoryLabel(category)}
+                  <span className="project-tab-count">
+                    {projects.filter((project) => project.category === category).length}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="project-track-window">
+            <div className={`project-track ${leaving ? "is-leaving" : ""}`} ref={trackRef} key={activeCategory}>
+              {visibleProjects.map((project) => {
+                const isExpanded = expandedId === project.id;
+                const stack = project.stack.slice(0, 4);
+
+                return (
+                  <article className={`pcard ${isExpanded ? "is-open" : ""}`} key={project.id}>
+                    <button
+                      type="button"
+                      className="pcard-hit"
+                      aria-expanded={isExpanded}
+                      aria-label={`${isExpanded ? t("Less") : t("Read more")}: ${t(project.title)}`}
+                      onClick={() => setExpandedId(isExpanded ? "" : project.id)}
+                    />
+
+                    <div className="pcard-top">
+                      <span className="pcard-category">{categoryLabel(project.category)}</span>
+                      <a
+                        className="pcard-code"
+                        href={project.github}
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-label={`${t("GitHub Code")}: ${t(project.title)}`}
+                      >
+                        <GitHubIcon />
+                      </a>
+                    </div>
+
+                    <h3>{t(project.title)}</h3>
+
+                    <div className="pcard-panes">
+                      <div className="pcard-pane pcard-overview" aria-hidden={isExpanded}>
+                        <p className="pcard-summary">{t(project.summary)}</p>
+                        <dl className="pcard-spec">
+                          <div>
+                            <dt>{t("Stack")}</dt>
+                            <dd className="pcard-stack-list">
+                              {stack.map((item) => {
+                                const iconUrl = getStackIconUrl(item);
+                                return (
+                                  <span key={item}>
+                                    {iconUrl ? <img src={iconUrl} alt="" draggable={false} /> : null}
+                                    {item}
+                                  </span>
+                                );
+                              })}
+                            </dd>
+                          </div>
+                          <div>
+                            <dt>{t("Signals")}</dt>
+                            <dd>
+                              <ul>
+                                {project.results.slice(0, 3).map((result) => (
+                                  <li key={result}>{t(result)}</li>
+                                ))}
+                              </ul>
+                            </dd>
+                          </div>
+                        </dl>
+                      </div>
+
+                      <div className="pcard-pane pcard-more" aria-hidden={!isExpanded}>
+                        <p>{t(project.detail)}</p>
+                        <button
+                          type="button"
+                          className="pcard-full"
+                          tabIndex={isExpanded ? 0 : -1}
+                          onClick={() => setOpenId(project.id)}
+                        >
+                          {t("Full details and results")}
+                          <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+                            <path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="pcard-foot" aria-hidden="true">
+                      <span>{isExpanded ? t("Less") : t("Read more")}</span>
+                      <svg className="pcard-toggle-icon" viewBox="0 0 16 16" width="14" height="14">
+                        <path d="M8 3v10M3 8h10" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                      </svg>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="project-stage-bottom" aria-hidden="true">
+            <span className="project-progress">
+              <span ref={progressRef} />
+            </span>
+            <span className="project-scroll-hint">
+              {isPinned ? t("Scroll to explore") : t("Swipe to explore")}
+              <svg viewBox="0 0 16 16" width="14" height="14">
+                <path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {openProject ? createPortal(<ProjectDrawer project={openProject} onClose={closeProject} />, document.body) : null}
     </section>
   );
 }

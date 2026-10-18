@@ -144,14 +144,90 @@ export class AntigravityScene {
     this.particles = new MainParticles(this);
   }
 
+  /**
+   * A click pulls nearby particles into a shape around the pointer for a moment.
+   * Position is in simulation units; `amount` eases in, holds, then releases.
+   */
+  readonly click = {
+    x: 0,
+    y: 0,
+    start: -100,
+    /** Which shape to form (see the ambient shader), chosen by the section and how crowded the spot is. */
+    variant: 0,
+    scale: 1,
+    amount(now: number): number {
+      const age = now - this.start;
+      if (age < 0 || age > 3.2) {
+        return 0;
+      }
+      const rise = Math.min(1, age / 0.45);
+      const fall = age < 1.9 ? 1 : Math.max(0, 1 - (age - 1.9) / 1.3);
+      const eased = rise * rise * (3 - 2 * rise);
+      return eased * fall * fall * (3 - 2 * fall);
+    }
+  };
+
+  /**
+   * Points of interest on the page, in simulation units: x, y and a free value (z).
+   * The Experience background grows a node and a branch at each role.
+   */
+  anchors: THREE.Vector3[] = [];
+
+  private unitsPerPx(): number {
+    return (2 * Math.tan((20 * Math.PI) / 180) * 3.1) / 5 / (this.container.offsetHeight || 1);
+  }
+
+  /** Convert CSS pixels relative to the canvas into simulation units. */
+  toUnits(x: number, y: number): THREE.Vector2 {
+    const unitsPerPx = this.unitsPerPx();
+    return new THREE.Vector2(
+      (x - (this.container.offsetWidth || 1) / 2) * unitsPerPx,
+      (y - (this.container.offsetHeight || 1) / 2) * unitsPerPx
+    );
+  }
+
+  /** Pull particles toward a point given in CSS pixels relative to the canvas. */
+  triggerClick(x: number, y: number, variant = 0, scale = 1): void {
+    const point = this.toUnits(x, y);
+    this.click.x = point.x;
+    this.click.y = point.y;
+    this.click.variant = variant;
+    this.click.scale = scale;
+    this.click.start = this.elapsed();
+  }
+
+  /** Anchors in CSS pixels relative to the canvas; z is passed through untouched. */
+  setAnchors(points: { x: number; y: number; z: number }[]): void {
+    this.anchors = points.map((point) => {
+      const units = this.toUnits(point.x, point.y);
+      return new THREE.Vector3(units.x, units.y, point.z * this.unitsPerPx());
+    });
+  }
+
+  private accumulatedTime = 0;
+  private lastNow = performance.now();
+
+  /**
+   * Seconds of running time. Unlike THREE.Clock it does not reset when the scene is paused
+   * off-screen, so continuous motions (orbits, currents) resume where they left off.
+   */
+  elapsed(): number {
+    const now = performance.now();
+    if (!this.isPaused) {
+      this.accumulatedTime += Math.min(0.1, (now - this.lastNow) / 1000);
+    }
+    this.lastNow = now;
+    return this.accumulatedTime;
+  }
+
   stop(): void {
+    this.elapsed();
     this.isPaused = true;
-    this.clock.stop();
   }
 
   resume(): void {
     this.isPaused = false;
-    this.clock.start();
+    this.lastNow = performance.now();
   }
 
   killParticles(): void {
@@ -175,7 +251,7 @@ export class AntigravityScene {
   }
 
   preRender(): void {
-    const elapsed = this.clock.getElapsedTime();
+    const elapsed = this.elapsed();
     this.dt = elapsed - this.lastTime;
     this.lastTime = elapsed;
     this.time += this.dt;

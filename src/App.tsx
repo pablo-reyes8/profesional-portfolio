@@ -101,21 +101,16 @@ function App() {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          const section = entry.target as HTMLElement;
-
           if (entry.isIntersecting) {
-            section.classList.add("is-in-view");
-            section.classList.toggle("is-section-active", entry.intersectionRatio > 0.42);
-          } else {
-            section.classList.remove("is-in-view");
-            section.classList.remove("is-section-active");
+            entry.target.classList.add("is-in-view");
+            observer.unobserve(entry.target);
           }
         });
       },
       {
         root: null,
-        rootMargin: "-16% 0px -20%",
-        threshold: [0.12, 0.42, 0.72]
+        rootMargin: "0px 0px -12%",
+        threshold: 0.08
       }
     );
 
@@ -124,7 +119,7 @@ function App() {
     return () => {
       observer.disconnect();
       sections.forEach((section) => {
-        section.classList.remove("section-transition", "is-in-view", "is-section-active");
+        section.classList.remove("section-transition", "is-in-view");
         section.style.removeProperty("--section-index");
       });
     };
