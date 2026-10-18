@@ -8,17 +8,76 @@ interface AmbientParticleBackgroundProps {
 
 type AmbientVariant = "about" | "projects" | "projectsTall" | "experience" | "experienceLight" | "formation" | "contact";
 
-// Click shapes per section: [open space, crowded spot]. Indices match the ambient shader:
-// 0 rings, 1 card outline, 2 bell curve, 3 spark, 4 atom, 5 regression, 6 neural network, 7 histogram.
-const clickShapes: Record<AmbientVariant, [number, number]> = {
-  about: [4, 0],
-  projects: [6, 1],
-  projectsTall: [6, 1],
-  experience: [5, 0],
-  experienceLight: [5, 0],
-  formation: [2, 7],
-  contact: [3, 3]
+// Click shapes, indices matching the ambient shader:
+const SHAPE = {
+  rings: 0,
+  card: 1,
+  bell: 2,
+  spark: 3,
+  atom: 4,
+  regression: 5,
+  network: 6,
+  histogram: 7
+} as const;
+
+// One shared pool. Each crowding level has its own odds: open space favours the richer,
+// larger shapes; crowded spots favour compact ones that read in a small gap.
+const poolByCrowding: Record<"open" | "medium" | "crowded", number[]> = {
+  //       rings card bell spark atom regr. network hist.
+  open: [0.4, 0.4, 2.5, 1.0, 3.0, 2.5, 3.0, 1.5],
+  medium: [1.0, 1.5, 2.0, 2.5, 1.5, 1.5, 1.0, 3.0],
+  crowded: [3.0, 3.0, 0.3, 2.0, 1.0, 0.3, 0.2, 0.6]
 };
+
+// Where on screen: the left third leans structured, the center leans toward networks and
+// curves, the right leans organic.
+const poolByColumn: number[][] = [
+  [1.0, 1.4, 1.0, 0.8, 0.8, 1.3, 1.0, 1.4],
+  [0.9, 0.9, 1.3, 1.0, 1.0, 1.0, 1.4, 1.0],
+  [1.4, 0.8, 0.9, 1.3, 1.4, 0.9, 0.9, 0.8]
+];
+
+// Each section keeps a mild preference for its own shapes, so it still feels like itself.
+const sectionAffinity: Record<AmbientVariant, number[]> = {
+  about: [SHAPE.atom, SHAPE.rings],
+  projects: [SHAPE.network, SHAPE.card],
+  projectsTall: [SHAPE.network, SHAPE.card],
+  experience: [SHAPE.regression, SHAPE.rings],
+  experienceLight: [SHAPE.regression, SHAPE.rings],
+  formation: [SHAPE.bell, SHAPE.histogram],
+  contact: [SHAPE.spark, SHAPE.atom]
+};
+
+// Shared across sections: the last two shapes are left out of the next draw, so repeated
+// clicks never give the same shape twice in a row anywhere on the page.
+const recentShapes: number[] = [];
+
+function pickClickShape(variant: AmbientVariant, density: number, clientX: number): { shape: number; scale: number } {
+  const crowding = density < 0.2 ? "open" : density < 0.5 ? "medium" : "crowded";
+  const column = Math.min(2, Math.max(0, Math.floor((clientX / window.innerWidth) * 3)));
+  const affinity = sectionAffinity[variant];
+
+  const weights = poolByCrowding[crowding].map((weight, shape) => {
+    if (recentShapes.includes(shape)) {
+      return 0;
+    }
+    return weight * poolByColumn[column][shape] * (affinity.includes(shape) ? 1.6 : 1);
+  });
+
+  const total = weights.reduce((sum, weight) => sum + weight, 0);
+  let roll = Math.random() * total;
+  let shape = weights.findIndex((weight) => (roll -= weight) <= 0);
+  if (shape < 0) {
+    shape = weights.findIndex((weight) => weight > 0);
+  }
+
+  recentShapes.push(shape);
+  if (recentShapes.length > 2) {
+    recentShapes.shift();
+  }
+
+  return { shape, scale: crowding === "open" ? 1.2 : crowding === "medium" ? 1 : 0.82 };
+}
 
 // What counts as content when judging how crowded a spot is.
 const CONTENT_SELECTOR =
@@ -146,8 +205,8 @@ function AmbientParticleBackground({ className, variant = "about" }: AmbientPart
 
     observer.observe(container);
 
-    // A click anywhere in the section pulls nearby particles into a shape. Open space gets the
-    // section's fuller shape; a crowded spot gets a compact one.
+    // A click anywhere in the section pulls nearby particles into a shape drawn from the
+    // shared pool, weighted by how crowded the spot is and where it sits on screen.
     const host = container.parentElement;
     const handlePointerDown = (event: PointerEvent): void => {
       if (!scene || event.button !== 0) {
@@ -155,15 +214,9 @@ function AmbientParticleBackground({ className, variant = "about" }: AmbientPart
       }
 
       const density = measureDensity(event.clientX, event.clientY);
-      const [openShape, crowdedShape] = clickShapes[variant];
-      const isCrowded = density > 0.35;
+      const { shape, scale } = pickClickShape(variant, density, event.clientX);
       const rect = container.getBoundingClientRect();
-      scene.triggerClick(
-        event.clientX - rect.left,
-        event.clientY - rect.top,
-        isCrowded ? crowdedShape : openShape,
-        isCrowded ? 0.82 : 1.2
-      );
+      scene.triggerClick(event.clientX - rect.left, event.clientY - rect.top, shape, scale);
     };
     host?.addEventListener("pointerdown", handlePointerDown);
 
